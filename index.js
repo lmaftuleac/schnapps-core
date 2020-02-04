@@ -176,6 +176,17 @@ class ServiceChain {
 
 }
 
+function createServiceChain() {
+  const chain = new ServiceChain();
+  const { exec } = chain;
+  exec.use = chain.use;
+  exec.case = chain.case;
+  exec.end = chain.end;
+  exec.catch = chain.catch;
+  return exec;
+}
 
-module.exports = ServiceChain;
+createServiceChain.setDefaultErrorHandler = ServiceChain.setDefaultErrorHandler
+
+module.exports = createServiceChain;
 
