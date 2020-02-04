@@ -1,0 +1,23 @@
+{
+  "name": "service-chain",
+  "version": "1.0.0",
+  "description": "Chain services similar to express middleware, supports branching and error handling",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lmaftuleac/service-chain.git"
+  },
+  "keywords": [
+    "service-chain",
+    "chain"
+  ],
+  "author": "Liviu Maftuleac <liviu.maftuleac@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/lmaftuleac/service-chain/issues"
+  },
+  "homepage": "https://github.com/lmaftuleac/service-chain#readme"
+}
