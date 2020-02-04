@@ -1,5 +1,3 @@
-
-//DEFAULTS
 // default branch options
 const BRANCH_OPTS = {
   reroute: true
@@ -97,12 +95,16 @@ class ServiceChain {
 
   constructor() {
     this.nodes = [];
-    this.use = this.use.bind(this);
     this.endCallback = null;
     this.catchCallback = null;
+
+    // bind context
+    this.use = this.use.bind(this);
     this.exec = this.exec.bind(this);
     this.catch = this.catch.bind(this);
     this.end = this.end.bind(this);
+    
+    // add chainable methods to exec
     this.exec.use = this.use;
     this.exec.case = this.case;
     this.exec.end = this.end;
@@ -176,17 +178,5 @@ class ServiceChain {
 
 }
 
-function createServiceChain() {
-  const chain = new ServiceChain();
-  const { exec } = chain;
-  exec.use = chain.use;
-  exec.case = chain.case;
-  exec.end = chain.end;
-  exec.catch = chain.catch;
-  return exec;
-}
-
-createServiceChain.setDefaultErrorHandler = ServiceChain.setDefaultErrorHandler
-
-module.exports = createServiceChain;
+module.exports = ServiceChain;
 
