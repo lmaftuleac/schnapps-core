@@ -39,7 +39,7 @@ const cycleRunner = (req, res, handler, customData, errCb, doneCb) => {
 
       // re-routing to separate branch
       if (reroute) {
-        return branch.exec(req, res, data);
+        return branch.run(req, res, data);
       }
 
       // simple call branch
@@ -100,15 +100,15 @@ class ServiceChain {
 
     // bind context
     this.use = this.use.bind(this);
-    this.exec = this.exec.bind(this);
+    this.run = this.run.bind(this);
     this.catch = this.catch.bind(this);
     this.end = this.end.bind(this);
     
-    // add chainable methods to exec
-    this.exec.use = this.use;
-    this.exec.case = this.case;
-    this.exec.end = this.end;
-    this.exec.catch = this.catch;
+    // add chainable methods to run
+    this.run.use = this.use;
+    this.run.case = this.case;
+    this.run.end = this.end;
+    this.run.catch = this.catch;
   }
 
   register(fn) {
@@ -132,20 +132,20 @@ class ServiceChain {
 
   use(fn) {
     this.register(fn);
-    return this.exec;
+    return this.run;
   }
 
   catch(errorHandler) {
     this.catchCallback = errorHandler;
-    return this.exec;
+    return this.run;
   }
 
   end(endCallback) {
     this.endCallback = endCallback;
-    return this.exec;
+    return this.run;
   }
 
-  exec(req, res, initData) {
+  run(req, res, initData) {
     const firstInQ = this.nodes[0];
 
     // error callback for cycle runner
