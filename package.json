@@ -1,7 +1,7 @@
 {
-  "name": "service-chain",
+  "name": "chain-controller",
   "version": "1.0.0",
-  "description": "Chain services similar to express middleware, supports branching and error handling",
+  "description": "Chain services similar to express middleware into a single controller, supports branching and error handling",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
