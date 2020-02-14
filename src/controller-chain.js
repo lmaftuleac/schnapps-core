@@ -173,7 +173,7 @@ class ControllerChain {
   }
 
   static setDefaultErrorHandler(customErrorHandler) {
-    ControllerChain.__error = customErrorHandler;
+    ControllerChain.__errorHandler = customErrorHandler;
   }
 
 }
