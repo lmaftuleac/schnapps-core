@@ -103,15 +103,42 @@ class ControllerChain {
     this.run = this.run.bind(this);
     this.catch = this.catch.bind(this);
     this.end = this.end.bind(this);
+    this.before = this.before.bind(this);
     
     // add chainable methods to run
     this.run.use = this.use;
     this.run.case = this.case;
     this.run.end = this.end;
     this.run.catch = this.catch;
+    this.run.before = this.before;
   }
 
-  register(fn) {
+  // PRIVATE
+
+  chainHandlers(node, lastNode) {
+    if (node && lastNode) {
+      node.next = lastNode;
+    }
+  }
+
+  prepend(fn) {
+    // first handler
+    const firstHandler = this.nodes[0];
+
+    // generate handler object
+    const handler = {
+      fn,
+      next: firstHandler,
+    }
+
+    // previous handler to current
+    this.chainHandlers(handler, firstHandler);
+
+    // include as first handler
+    this.nodes.unshift(handler);
+  }
+
+  append(fn) {
     // get last registered handler
     const lastIndex = this.nodes.length - 1;
     const lastHandler = this.nodes[lastIndex];
@@ -123,15 +150,40 @@ class ControllerChain {
     }
 
     // previous handler to current
-    if (lastHandler) {
-      lastHandler.next = handler;
-    }
+    this.chainHandlers(lastHandler, handler);
 
     this.nodes.push(handler);
   }
 
+  // PUBLIC
+
   use(fn) {
-    this.register(fn);
+    if (typeof fn === 'function') {
+      this.append(fn);
+    }
+    else if (fn instanceof ControllerChain) {
+      const ourLastHandler = this.nodes[this.nodes.length - 1];
+      const firstForeignHandler = fn.nodes[0];
+      if (firstForeignHandler) {
+        this.chainHandlers(ourLastHandler, firstForeignHandler);
+        this.nodes = this.nodes.concat(fn.nodes);
+      }
+    }
+    return this.run;
+  }
+
+  before(fn) {
+    if (typeof fn === 'function') {
+      this.prepend(fn);
+    }
+    else if (fn instanceof ControllerChain) {
+      const lastForeignHandler = fn.nodes[fn.nodes.length - 1];
+      const ourFirstHandler = this.nodes[0];
+      if (lastForeignHandler && ourFirstHandler) {
+        this.chainHandlers(lastForeignHandler, ourFirstHandler);
+        this.nodes = fn.nodes.concat(this.nodes);
+      }
+    }
     return this.run;
   }
 
@@ -166,7 +218,7 @@ class ControllerChain {
     if (firstInQ) {
       return cycleRunner(req, res, firstInQ, initData, errCb, doneCb);
     }
-}
+  }
 
   static __errorHandler(req, res, error) {
     res.send('SERVER ERROR');
