@@ -12,15 +12,17 @@
     "url": "git+https://github.com/lmaftuleac/controller-chain"
   },
   "keywords": [
-    "service-chain",
+    "controller-chain",
+    "express",
+    "controller",
     "chain"
   ],
   "author": "Liviu Maftuleac <liviu.maftuleac@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/lmaftuleac/service-chain/issues"
+    "url": "https://github.com/lmaftuleac/controller-chain"
   },
-  "homepage": "https://github.com/lmaftuleac/service-chain#readme",
+  "homepage": "https://github.com/lmaftuleac/controller-chain#readme",
   "devDependencies": {
     "assert": "^2.0.0",
     "chai": "^4.2.0",

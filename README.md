@@ -7,7 +7,7 @@ Chain multiple services into a single controller, similar to express middleware.
 ```
 const ControllerChain = require('controller-chain')
 
-// create a chain service
+// create a chain
 const GetUserController = new ControllerChain()
 
 // add handlers, similar to express route.use
@@ -36,7 +36,6 @@ express.get('/user', (req, res) => {
 ```
 const ControllerChain = require('controller-chain')
 
-// create a chain service
 const MainController = new ControllerChain()
 const BranchA = new ControllerChain()
 const BranchB = new ControllerChain()
@@ -74,7 +73,7 @@ MainController
   })
 
 express.get('/user/:ver', (req, res) => {
-  const ver = req.params
+  const { ver } = req.params
   MainController(req, res, { ver })
 })
 
