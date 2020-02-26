@@ -1,2 +1,2 @@
-const ControllerChain = require('./src/controller-chain');
-module.exports = ControllerChain;
+const ControllerChain = require('./src/chain')
+module.exports = ControllerChain

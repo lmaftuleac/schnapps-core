@@ -1,5 +1,10 @@
 # Controller Chain
 
-Chain services into a single controller, similar to express middleware. Supports branching and error handling
+Chain multiple services into a single controller, similar to express middleware. Supports branching and error handling
 
-Check `examples` folder
+## Create a Chain 
+```
+const ControllerChain = require('controller-chain')
+
+
+```
