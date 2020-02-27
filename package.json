@@ -1,6 +1,6 @@
 {
   "name": "controller-chain",
-  "version": "2.0.2",
+  "version": "2.1.0",
   "description": "Chain services similar to express middleware into a single controller, supports branching and error handling",
   "main": "index.js",
   "scripts": {
@@ -24,7 +24,6 @@
   },
   "homepage": "https://github.com/lmaftuleac/controller-chain#readme",
   "devDependencies": {
-    "assert": "^2.0.0",
     "chai": "^4.2.0",
     "mocha": "^7.0.1",
     "nyc": "^15.0.0"

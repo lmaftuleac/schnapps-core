@@ -2,13 +2,12 @@
 
 Chain multiple services into a single controller, similar to express middleware. Supports branching and error handling. Unlike express middleware, `controller-chain` allows to pass data through next() function. This allows to create re-usable services.
 
-
 ## Create a Chain 
 ```
-const ControllerChain = require('controller-chain')
+const { Chain } = require('controller-chain')
 
 // create a chain
-const GetUserController = new ControllerChain()
+const GetUserController = new Chain()
 
 // add handlers, similar to express route.use
 GetUserController
@@ -34,11 +33,11 @@ express.get('/user', (req, res) => {
 ## Using Branches
 
 ```
-const ControllerChain = require('controller-chain')
+const { Chain } = require('controller-chain')
 
-const MainController = new ControllerChain()
-const BranchA = new ControllerChain()
-const BranchB = new ControllerChain()
+const MainController = new Chain()
+const BranchA = new Chain()
+const BranchB = new Chain()
 
 
 BranchA
@@ -78,8 +77,70 @@ express.get('/user/:ver', (req, res) => {
 })
 
 ```
+## Promisify
+
+use `promisify(chain)(req, res, data)` to call a chain  as a promise
+
+```
+const { Chain, promisify } = require('controller-chain')
+
+const MainController = new Chain()
+const BranchA = new Chain()
+const BranchB = new Chain()
+
+
+BranchA
+  .do(( req, res, next, errCb, data) => {
+    return res.send('controller A')
+  })
+
+BranchB
+  .do(( req, res, next, errCb, data) => {
+    return res.send('controller B')
+  })
+
+// add handlers, similar to express route.use
+MainController
+  .do(( req, res, next, errCb, data) => {
+    const { ver } = data;
+
+    if (ver === 'a') {
+      // use BranchA
+      return next(BranchA, data)
+    }
+
+    if (ver === 'b') {
+      // use BranchB
+      return next(BranchB, data)
+    }
+
+    return errCb('Unknown Parameter')
+  })
 
 
 
+express.get('/user/:ver', async (req, res) => {
+  const { ver } = req.params
+  
+  try {
+    data = await promisify(MainController)(req, res, { ver })
+    res.send(data)
+  } catch(error) {
+    res.send(error)
+  }
+})
 
+```
+
+## Run Tests
+
+run tests
+```
+npm test
+```
+
+or, for a nyc html report
+```
+npm test:nyc
+```
 

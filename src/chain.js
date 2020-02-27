@@ -4,7 +4,7 @@ const BRANCH_OPTS = {
   reroute: false
 }
 
-class ControllerChain {
+class Chain {
   constructor () {
     const self = this
     this.nodes = []
@@ -43,13 +43,13 @@ class ControllerChain {
       if (this.catchCallback) {
         return this.catchCallback(req, res, err)
       }
-      return ControllerChain.__errorHandler(req, res, err)
+      return Chain.__errorHandler(req, res, err)
     }
 
     // success callback for cycle runner
-    const doneCb = (...args) => {
+    const doneCb = (req, res, errCb, data) => {
       if (this.endCallback) {
-        this.endCallback.apply(this, args)
+        this.endCallback(req, res, errCb, data)
       }
     }
 
@@ -68,30 +68,42 @@ class ControllerChain {
     }
   }
 
+  addNode (node) {
+    const lastNode = this.getLastNode()
+    if (lastNode) {
+      lastNode.link(node)
+    }
+    this.nodes.push(node)
+  }
+
+  cloneNodes (nodes) {
+    nodes.forEach((node) => {
+      const { handler } = node
+      const nodeCopy = new LayerNode(handler)
+      this.addNode(nodeCopy)
+    })
+  }
+
   do (handler) {
-    // include handler function
     if (
       typeof handler === 'function' &&
-      !(handler.__self__ instanceof ControllerChain)
+      !(handler.__self__ instanceof Chain)
     ) {
+      // include handler function
       const node = new LayerNode(handler)
-      const lastNode = this.getLastNode()
-      if (lastNode) {
-        lastNode.link(node)
-      }
-      this.nodes.push(node)
+      this.addNode(node)
     } else if (
       typeof handler === 'function' &&
-      handler.__self__ instanceof ControllerChain
+      handler.__self__ instanceof Chain
     ) {
+      // include another Chain
       const childBranch = handler
-      const lastNode = this.getLastNode()
-      const firstBranchNode = childBranch.getFirstNode()
 
-      if (lastNode && firstBranchNode) {
-        lastNode.link(firstBranchNode)
-        this.nodes = this.nodes.concat(childBranch.nodes)
+      if (!childBranch.nodes.length) {
+        throw new Error('Provided branch does not have nodes')
       }
+
+      this.cloneNodes(childBranch.nodes)
     }
     return this.init
   }
@@ -115,7 +127,7 @@ class ControllerChain {
   }
 
   static setDefaultErrorHandler (customErrorHandler) {
-    ControllerChain.__errorHandler = customErrorHandler
+    Chain.__errorHandler = customErrorHandler
   }
 }
 
@@ -140,7 +152,7 @@ const callNode = (req, res, node, customData, errCb, doneCb) => {
     let branch, data, opts
 
     // get data inputs
-    if (typeof args[0] === 'function' && (args[0].__self__ instanceof ControllerChain)) {
+    if (typeof args[0] === 'function' && (args[0].__self__ instanceof Chain)) {
       branch = args[0]
       opts = { ...BRANCH_OPTS, ...args[2] }
       data = args[1]
@@ -204,4 +216,7 @@ const callNode = (req, res, node, customData, errCb, doneCb) => {
   return node.handler(req, res, next, error, customData)
 }
 
-module.exports = ControllerChain
+module.exports = {
+  Chain,
+  callNode
+}
