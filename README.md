@@ -1,8 +1,147 @@
 # Controller Chain
 
-Chain multiple services into a single controller, similar to express middleware. Supports branching and error handling. Unlike express middleware, `controller-chain` allows to pass data through next() function. This allows to create re-usable services.
+Chain multiple services into a single controller, similar to express middleware. Supports branching and error handling. Unlike express middleware, `controller-chain` allows to pass data through next() function. This allows to create re-usable services and re-usable service sequences.
 
-## Create a Chain 
+## Controller Chain Object
+A controller is an object that chains multiple handlers together. It can be regarded as a wrapper that chains a set of handlers (services) in a specific order
+
+```
+const { Chain } = require('controller-chain')
+
+// Create a new controller
+const Controller = new Chain()
+
+// add handlers
+Controller
+  .do(<handler>) 
+  .do(<handler>)
+  .do(<handler>)
+  /* optional */
+  .end(<handler>)
+  .catch(<errorHandler>)
+
+// use with express
+express.get('/', (req, res) => Controller(req, res, {data: 'some-initial-data'}))
+
+```
+
+## Handler function
+A handler is a function similar to a middleware in express. It is used for a specific task, when 
+```
+/**
+ * Add two numbers together
+ * @param  {Object} req Express request object
+ * @param  {Object} res Express response object
+ * @param  {Function} next A callback function, triggers next handler defined in controller chain
+ * @param  {Function} errCb error callback function.
+ * @param  {Any} data Data object passed from previous handler
+ */
+const handler = function (req, res, next, errCb, data) {
+	// do something here
+};
+```
+
+## next function
+similar to express, `next()` triggers next handler, with a small difference: instead of passing an error (in express) it passes data to the next handler. We can also use next() re-use another chain controller
+```
+const getUserIdHandler = (req, res, next, errCb, data) {
+    const { userId } = req.body
+    
+    // pass userId to next handler
+    next({ userId })
+}
+
+const getUserHandler = async (req, res, next, errCb, { userId }) => {
+  try {
+    const user = await db.select(`select * from users where users.id == ${userId}`)
+    next(user)
+  } catch(error) {
+    errCb({
+      status: 500,
+      message: 'Cannot Find User'
+    })
+  }
+}
+
+const GetUserController = new Chain();
+
+GetUserController
+  .do(getUserIdHandler)
+  .do(getUserHandler)
+  .end((req, res, errCb, user) => {
+    res.status(200).send(user)
+  })
+  .catch((req, res, error) => {
+    res.status(error.status).send(error.message)
+  })
+
+
+```
+In case we want to re-use another controller, pass controller as first parameter and data as second. 
+In this case however only the handlers will be called from `GetUserController` without calling `.end()` or `.catch()` since parent controller has it's own end and catch functions.
+
+```
+Controller = new Chain()
+
+Controller
+  .do((req, res, next, errCb, user) => {
+    if (req.body.userId) {
+      // here second parameter is optional
+      next(
+        GetUserController,  // controller chain
+        { foo: 'bar' },     // some data
+      )
+    } else {
+      errCb({
+        status:500,
+        message: 'Invalid Parameters'
+      })
+    }
+  })
+  .do((req, res, next, errCb, user) => {
+    // received user here
+    // do some stuff
+    next(user)
+  })
+  .end((req, res, errCb, user) => {
+    res.status(200).send(user)
+  })
+  .catch((req, res, error) => {
+    res.status(error.status).send(error.message)
+  })
+
+```
+In case we want to completely reroute our request, we need to pas a third parameter with `{ reroute: true }` in this case request will be completely handled by the controller passed in next() function, and the handlers below will be ignored along with `.catch` and `.end` functions
+
+
+```
+Controller = new Chain()
+
+Controller
+  .do((req, res, next, errCb, user) => {
+      next(
+        GetUserController,  // controller chain
+        { foo: 'bar' },     // some data
+        { reroute: true }   // reroute to GetUserController
+      )
+    }
+  })
+  .do((req, res, next, errCb, user) => {
+    // this will be ignored
+  })
+  .end((req, res, errCb, user) => {
+    // this will be ignored
+  })
+  .catch((req, res, error) => {
+    // this will be ignored
+  })
+
+```
+
+---
+# Examples
+
+### Create a Chain 
 ```
 const { Chain } = require('controller-chain')
 
@@ -30,7 +169,7 @@ express.get('/user', (req, res) => {
 
 ```
 
-## Using Branches
+### Using Branches
 
 ```
 const { Chain } = require('controller-chain')
@@ -91,7 +230,7 @@ express.get('/return-A', (req, res) => {
 
 ```
 
-## Promisify
+### Promisify
 
 use `promisify(chain)(req, res, data)` to call a chain  as a promise
 
@@ -146,7 +285,7 @@ express.get('/user/:ver', async (req, res) => {
 
 ```
 
-## Global Error Handler
+### Global Error Handler
 
 Provide a global error handler
 
@@ -183,7 +322,7 @@ express.get('/something-2', async (req, res) => {
 
 ```
 ---
-## Run Tests
+### Run Tests
 
 run tests
 ```
