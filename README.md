@@ -55,6 +55,8 @@ MainController
   .do(( req, res, next, errCb, data) => {
     const { ver } = data;
 
+    // passing branches through next()
+
     if (ver === 'a') {
       // use BranchA
       return next(BranchA, data)
@@ -76,7 +78,19 @@ express.get('/user/:ver', (req, res) => {
   MainController(req, res, { ver })
 })
 
+
+// OR pass a branch directly in do()
+
+const SecondController = new Chain()
+
+SecondController.do(BranchA)
+
+express.get('/return-A', (req, res) => {
+  SecondController(req, res)
+})
+
 ```
+
 ## Promisify
 
 use `promisify(chain)(req, res, data)` to call a chain  as a promise
@@ -132,6 +146,43 @@ express.get('/user/:ver', async (req, res) => {
 
 ```
 
+## Global Error Handler
+
+Provide a global error handler
+
+```
+const { Chain } = require('controller-chain')
+
+Chain.setDefaultErrorHandler((req, res, error) => {
+  // hanlde error
+  res.status(error.status).send(error.message)
+})
+
+const firstController = new Chain()
+const secondController = new Chain()
+
+firstController
+  .do((req, res, next, errCb, data) => {
+    errCb({ status: 500, message: 'Error in Controller 1' })
+  })
+
+secondController
+  .do((req, res, next, errCb, data) => {
+    errCb({ status: 500, message: 'Error in Controller 2' })
+  })
+
+
+// connect to express
+express.get('/something-1', (req, res) => {
+  firstController(req, res)
+})
+
+express.get('/something-2', async (req, res) => {
+  secondController(req, res)
+})
+
+```
+---
 ## Run Tests
 
 run tests
