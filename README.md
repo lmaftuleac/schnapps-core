@@ -61,7 +61,7 @@ const next = function (data) {
  * @param  {Any} data               data passed to controller. Optional
  * @param  {Object} options         option object { reroute: <boolean> } Optional 
  */
-const next = function (data) {
+const next = function (controller, data, options) {
 	// do something here
 };
 ```
