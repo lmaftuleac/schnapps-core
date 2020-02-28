@@ -24,7 +24,7 @@ express.get('/', (req, res) => Controller(req, res, {data: 'some-initial-data'})
 ```
 
 ### Handler function
-A handler function similar to a [middleware](https://expressjs.com/en/guide/using-middleware.html) in express. The following statement also true for controller-chain handlers:
+A handler function similar to a [middleware](https://expressjs.com/en/guide/using-middleware.html) in express. The following statement is also true for controller-chain handlers:
 
 `
 Middleware functions are functions that have access to the request object (req), the response object (res), and the next middleware function in the application’s request-response cycle. The next middleware function is commonly denoted by a variable named next. If the current middleware function does not end the request-response cycle, it must call next() to pass control to the next middleware function. Otherwise, the request will be left hanging.
