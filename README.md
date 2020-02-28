@@ -33,9 +33,9 @@ Middleware functions are functions that have access to the request object (req),
 ```javascript
 /**
  * Handler function
- * @param  {Object} req         Express request object
- * @param  {Object} res         Express response object
- * @param  {Function} next      A callback function, triggers next handler defined in controller chain
+ * @param  {Object} req         express request object
+ * @param  {Object} res         express response object
+ * @param  {Function} next      callback function, triggers next handler
  * @param  {Function} errorCb   error callback function.
  * @param  {Any} data           Data object passed from previous handler
  */
