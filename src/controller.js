@@ -4,7 +4,7 @@ const BRANCH_OPTS = {
   reroute: false
 }
 
-class Chain {
+class Controller {
   constructor () {
     const self = this
     this.nodes = []
@@ -12,26 +12,30 @@ class Chain {
     this.catchCallback = null
 
     this.init = (...args) => {
-      return this.startChain.apply(self, args)
+      return this.start.apply(self, args)
     }
     this.do = this.do.bind(this)
     this.catch = this.catch.bind(this)
     this.end = this.end.bind(this)
     this.getFirstNode = this.getFirstNode.bind(this)
     this.getLastNode = this.getLastNode.bind(this)
+    this.promise = this.promise.bind(this)
 
     this.init.nodes = this.nodes
-    this.init.catch = this.catch
-    this.init.end = this.end
     this.init.getFirstNode = this.getFirstNode
     this.init.getLastNode = this.getLastNode
+    this.init.promise = this.promise
     this.init.do = this.do
+    this.init.catch = this.catch
+    this.init.end = this.end
     this.init.__self__ = this
 
     return this.init
   }
 
-  startChain (req, res, data) {
+  /** Private */
+
+  start (req, res, data) {
     const firstNode = this.getFirstNode()
 
     if (!firstNode) {
@@ -43,7 +47,7 @@ class Chain {
       if (this.catchCallback) {
         return this.catchCallback(req, res, err)
       }
-      return Chain.__errorHandler(req, res, err)
+      return Controller.__errorHandler(req, res, err)
     }
 
     // success callback for cycle runner
@@ -84,19 +88,21 @@ class Chain {
     })
   }
 
+  /** Public */
+
   do (handler) {
     if (
       typeof handler === 'function' &&
-      !(handler.__self__ instanceof Chain)
+      !(handler.__self__ instanceof Controller)
     ) {
       // include handler function
       const node = new LayerNode(handler)
       this.addNode(node)
     } else if (
       typeof handler === 'function' &&
-      handler.__self__ instanceof Chain
+      handler.__self__ instanceof Controller
     ) {
-      // include another Chain
+      // include another Controller
       const childBranch = handler
 
       if (!childBranch.nodes.length) {
@@ -106,6 +112,18 @@ class Chain {
       this.cloneNodes(childBranch.nodes)
     }
     return this.init
+  }
+
+  promise (req, res, data) {
+    return new Promise((resolve, reject) => {
+      const firstNode = this.getFirstNode()
+
+      const ok = (req, res, errCb, data) => {
+        return resolve(data)
+      }
+
+      callNode(req, res, firstNode, data, reject, ok)
+    })
   }
 
   catch (errorHandler) {
@@ -127,7 +145,7 @@ class Chain {
   }
 
   static setDefaultErrorHandler (customErrorHandler) {
-    Chain.__errorHandler = customErrorHandler
+    Controller.__errorHandler = customErrorHandler
   }
 }
 
@@ -152,7 +170,7 @@ const callNode = (req, res, node, customData, errCb, doneCb) => {
     let branch, data, opts
 
     // get data inputs
-    if (typeof args[0] === 'function' && (args[0].__self__ instanceof Chain)) {
+    if (typeof args[0] === 'function' && (args[0].__self__ instanceof Controller)) {
       branch = args[0]
       opts = { ...BRANCH_OPTS, ...args[2] }
       data = args[1]
@@ -217,6 +235,6 @@ const callNode = (req, res, node, customData, errCb, doneCb) => {
 }
 
 module.exports = {
-  Chain,
+  Controller,
   callNode
 }

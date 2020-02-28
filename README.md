@@ -1,52 +1,76 @@
-# Controller Chain
-
 Chain multiple services into a single controller, similar to express middleware. Supports branching and error handling. Unlike express middleware, `controller-chain` allows to pass data through next() function. This allows to create re-usable services and re-usable service sequences.
 
-## Controller Chain Object
+### Controller Object
 A controller is an object that chains multiple handlers together. It can be regarded as a wrapper that chains a set of handlers (services) in a specific order
 
-```
-const { Chain } = require('controller-chain')
+```javascript
+const  Controller = require('controller-chain')
 
 // Create a new controller
-const Controller = new Chain()
+const Controller = new Controller()
 
 // add handlers
 Controller
-  .do(<handler>) 
-  .do(<handler>)
-  .do(<handler>)
+  .do(handler) 
+  .do(handler)
+  .do(handler)
   /* optional */
-  .end(<handler>)
-  .catch(<errorHandler>)
+  .end(endHandler)
+  .catch(errorHandler)
 
 // use with express
 express.get('/', (req, res) => Controller(req, res, {data: 'some-initial-data'}))
 
 ```
 
-## Handler function
-A handler is a function similar to a middleware in express. It is used for a specific task, when 
+### Handler function
+A handler is a function similar to a [middleware]:https://expressjs.com/en/guide/using-middleware.html in express. Therefore the following statement also applies for controller-chain handlers:
+
 ```
+Middleware functions are functions that have access to the request object (req), the response object (res), and the next middleware function in the application’s request-response cycle. The next middleware function is commonly denoted by a variable named next.
+If the current middleware function does not end the request-response cycle, it must call next() to pass control to the next middleware function. Otherwise, the request will be left hanging.
+```
+
+```javascript
 /**
- * Add two numbers together
- * @param  {Object} req Express request object
- * @param  {Object} res Express response object
- * @param  {Function} next A callback function, triggers next handler defined in controller chain
- * @param  {Function} errCb error callback function.
- * @param  {Any} data Data object passed from previous handler
+ * Handler function
+ * @param  {Object} req         Express request object
+ * @param  {Object} res         Express response object
+ * @param  {Function} next      A callback function, triggers next handler defined in controller chain
+ * @param  {Function} errorCb   error callback function.
+ * @param  {Any} data           Data object passed from previous handler
  */
 const handler = function (req, res, next, errCb, data) {
 	// do something here
 };
 ```
 
-## next function
-similar to express, `next()` triggers next handler, with a small difference: instead of passing an error (in express) it passes data to the next handler. We can also use next() re-use another chain controller
+### Using next()
+similar to express, `next()` triggers next handler, with a small difference: instead of passing an error (in express) it passes data to the next handler. We can also use next() re-chain to another controller
+
+```javascript
+/**
+ * Next function
+ * @param  {Any} data Data object passed from previous handler
+ */
+const next = function (data) {
+	// do something here
+};
+/**
+ * OR
+ * @param  {Controller} controller  another controller object
+ * @param  {Any} data               data passed to controller. Optional
+ * @param  {Object} options         option object { reroute: <boolean> } Optional 
+ */
+const next = function (data) {
+	// do something here
+};
 ```
-const getUserIdHandler = (req, res, next, errCb, data) {
+
+```javascript
+
+const getUserIdHandler = (req, res, next, errCb, data) => {
     const { userId } = req.body
-    
     // pass userId to next handler
     next({ userId })
 }
@@ -63,7 +87,7 @@ const getUserHandler = async (req, res, next, errCb, { userId }) => {
   }
 }
 
-const GetUserController = new Chain();
+const GetUserController = new Controller();
 
 GetUserController
   .do(getUserIdHandler)
@@ -75,13 +99,13 @@ GetUserController
     res.status(error.status).send(error.message)
   })
 
-
 ```
+
 In case we want to re-use another controller, pass controller as first parameter and data as second. 
 In this case however only the handlers will be called from `GetUserController` without calling `.end()` or `.catch()` since parent controller has it's own end and catch functions.
 
-```
-Controller = new Chain()
+```javascript
+Controller = new Controller()
 
 Controller
   .do((req, res, next, errCb, user) => {
@@ -111,11 +135,11 @@ Controller
   })
 
 ```
-In case we want to completely reroute our request, we need to pas a third parameter with `{ reroute: true }` in this case request will be completely handled by the controller passed in next() function, and the handlers below will be ignored along with `.catch` and `.end` functions
+In case we want to completely reroute our request, we need to pas a third parameter with `{ reroute: true }`. In this case request will be completely handled by the controller passed in `next()` function, and the handlers below will be ignored along with `.catch` and `.end` functions
 
 
-```
-Controller = new Chain()
+```javascript
+Controller = new Controller()
 
 Controller
   .do((req, res, next, errCb, user) => {
@@ -137,46 +161,18 @@ Controller
   })
 
 ```
+### Using ErrorCallback
 
----
-# Examples
-
-### Create a Chain 
-```
-const { Chain } = require('controller-chain')
-
-// create a chain
-const GetUserController = new Chain()
-
-// add handlers, similar to express route.use
-GetUserController
-  .do(( req, res, next, errCb, data) => {
-    console.log('user', data.user);
-    data.today = new Date();
-    return next(data)
-  })
-  .do(( req, res, next, errCb, data) => {
-    return res.send(data)
-  })
-
-express.get('/user', (req, res) => {
-  const someInitialData = {
-    user: 'John Doe';
-  }
-  // call chain controller
-  GetUserController(req, res, someInitialData)
-})
-
-```
+Error callback is used to pass errors in handlers; A call to errorCb will stop chain execution and redirect to `.catch()` function. If `.catch` was not defined in controller it will be redirected to `globalErrorHandler`.
 
 ### Using Branches
 
-```
-const { Chain } = require('controller-chain')
+```javascript
+const  Controller = require('controller-chain')
 
-const MainController = new Chain()
-const BranchA = new Chain()
-const BranchB = new Chain()
+const MainController = new Controller()
+const BranchA = new Controller()
+const BranchB = new Controller()
 
 
 BranchA
@@ -220,7 +216,7 @@ express.get('/user/:ver', (req, res) => {
 
 // OR pass a branch directly in do()
 
-const SecondController = new Chain()
+const SecondController = new Controller()
 
 SecondController.do(BranchA)
 
@@ -230,16 +226,16 @@ express.get('/return-A', (req, res) => {
 
 ```
 
-### Promisify
+### Using .promise()
 
-use `promisify(chain)(req, res, data)` to call a chain  as a promise
+use `chain.promise(req, res, data)` to call a chain as a promise
 
-```
-const { Chain, promisify } = require('controller-chain')
+```javascript
+const Controller = require('controller-chain')
 
-const MainController = new Chain()
-const BranchA = new Chain()
-const BranchB = new Chain()
+const MainController = new Controller()
+const BranchA = new Controller()
+const BranchB = new Controller()
 
 
 BranchA
@@ -289,16 +285,16 @@ express.get('/user/:ver', async (req, res) => {
 
 Provide a global error handler
 
-```
-const { Chain } = require('controller-chain')
+```javascript
+const  Controller = require('controller-chain')
 
 Chain.setDefaultErrorHandler((req, res, error) => {
   // hanlde error
   res.status(error.status).send(error.message)
 })
 
-const firstController = new Chain()
-const secondController = new Chain()
+const firstController = new Controller()
+const secondController = new Controller()
 
 firstController
   .do((req, res, next, errCb, data) => {
@@ -324,12 +320,12 @@ express.get('/something-2', async (req, res) => {
 ---
 ### Run Tests
 
-run tests
+Run tests
 ```
 npm test
 ```
 
-or, for a nyc html report
+For a [nyc]:https://www.npmjs.com/package/nyc html report
 ```
 npm test:nyc
 ```

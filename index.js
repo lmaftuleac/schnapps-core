@@ -1,7 +1,3 @@
-const { Chain } = require('./src/chain')
-const promisify = require('./src/promisify')
+const { Controller } = require('./src/controller')
 
-module.exports = {
-  Chain,
-  promisify
-}
+module.exports = Controller

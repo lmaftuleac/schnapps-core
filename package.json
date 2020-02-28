@@ -1,6 +1,6 @@
 {
   "name": "controller-chain",
-  "version": "2.1.2",
+  "version": "2.1.3",
   "description": "Chain services similar to express middleware into a single controller, supports branching and error handling",
   "main": "index.js",
   "scripts": {

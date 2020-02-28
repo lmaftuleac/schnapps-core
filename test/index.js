@@ -1,11 +1,11 @@
 /* eslint-disable no-undef */
 const { expect } = require('chai')
-const { Chain, promisify } = require('../index')
+const Controller = require('../index')
 const LayerNode = require('../src/layer-node')
 
 describe('Test ChainController creation', function () {
   it('should create chainable controller', function () {
-    const chain = new Chain()
+    const chain = new Controller()
 
     expect(chain.nodes).to.be.an('array')
     expect(typeof chain).to.equal('function')
@@ -14,11 +14,11 @@ describe('Test ChainController creation', function () {
     expect(typeof chain.getFirstNode).to.equal('function')
     expect(typeof chain.getLastNode).to.equal('function')
     expect(typeof chain.do).to.equal('function')
-    expect(chain.__self__ instanceof Chain).to.be.equal(true)
+    expect(chain.__self__ instanceof Controller).to.be.equal(true)
   })
 
   it('should add nodes to chain', function () {
-    const chain = new Chain()
+    const chain = new Controller()
     const handler1 = (req, res, next, errCb, data) => {}
     const handler2 = (req, res, next, errCb, data) => {}
 
@@ -37,7 +37,7 @@ describe('Test ChainController creation', function () {
   })
 
   it('should add handlers to chain', function () {
-    const chain = new Chain()
+    const chain = new Controller()
     const reqMock = {}
     const resMock = {}
     const initialData = {
@@ -78,7 +78,7 @@ describe('Test ChainController creation', function () {
     const responseAfterDo = chain.do(handler1)
     expect(typeof responseAfterDo).to.equal('function')
     expect(typeof responseAfterDo.do).to.equal('function')
-    expect(responseAfterDo.__self__ instanceof Chain).to.equal(true)
+    expect(responseAfterDo.__self__ instanceof Controller).to.equal(true)
 
     chain
       .do(handler2)
@@ -87,8 +87,8 @@ describe('Test ChainController creation', function () {
   })
 
   it('should use a branch using next', function () {
-    const chain = new Chain()
-    const branch = new Chain()
+    const chain = new Controller()
+    const branch = new Controller()
 
     const reqMock = {}
     const resMock = {}
@@ -121,8 +121,8 @@ describe('Test ChainController creation', function () {
   })
 
   it('should reroute to branch using next', function () {
-    const chain = new Chain()
-    const branch = new Chain()
+    const chain = new Controller()
+    const branch = new Controller()
 
     const reqMock = {}
     const resMock = {}
@@ -159,9 +159,9 @@ describe('Test ChainController creation', function () {
   })
 
   it('should include branch directly into chain', function () {
-    const chain = new Chain()
-    const branch1 = new Chain()
-    const branch2 = new Chain()
+    const chain = new Controller()
+    const branch1 = new Controller()
+    const branch2 = new Controller()
 
     const reqMock = {}
     const resMock = {}
@@ -206,10 +206,10 @@ describe('Test ChainController creation', function () {
   })
 
   it('should include branches in many chains', function () {
-    const chain1 = new Chain()
-    const chain2 = new Chain()
-    const branch1 = new Chain()
-    const branch2 = new Chain()
+    const chain1 = new Controller()
+    const chain2 = new Controller()
+    const branch1 = new Controller()
+    const branch2 = new Controller()
 
     const reqMock = {}
     const resMock = {}
@@ -286,13 +286,13 @@ describe('Test ChainController creation', function () {
   })
 
   it('should use a global error handler', function () {
-    const chain = new Chain()
-    const branch1 = new Chain()
+    const chain = new Controller()
+    const branch1 = new Controller()
 
     const reqMock = {}
     const resMock = {}
 
-    Chain.setDefaultErrorHandler((req, res, data) => {
+    Controller.setDefaultErrorHandler((req, res, data) => {
       data.catchErrorInGlobalHandler = true
     })
 
@@ -329,7 +329,7 @@ describe('Test ChainController creation', function () {
   })
 
   it('should throw error on double next calls', function () {
-    const chain = new Chain()
+    const chain = new Controller()
     const reqMock = {}
     const resMock = {}
 
@@ -346,7 +346,7 @@ describe('Test ChainController creation', function () {
   })
 
   it('should throw error on double error calls', function () {
-    const chain = new Chain()
+    const chain = new Controller()
     const reqMock = {}
     const resMock = {}
 
@@ -363,7 +363,7 @@ describe('Test ChainController creation', function () {
   })
 
   it('should throw error on call error after next', function () {
-    const chain = new Chain()
+    const chain = new Controller()
     const reqMock = {}
     const resMock = {}
 
@@ -380,7 +380,7 @@ describe('Test ChainController creation', function () {
   })
 
   it('should throw error on call error after next', function () {
-    const chain = new Chain()
+    const chain = new Controller()
     const reqMock = {}
     const resMock = {}
 
@@ -397,7 +397,7 @@ describe('Test ChainController creation', function () {
   })
 
   it('should throw error on chains with no handlers', function () {
-    const chain = new Chain()
+    const chain = new Controller()
     const reqMock = {}
     const resMock = {}
 
@@ -419,8 +419,8 @@ describe('Test ChainController creation', function () {
   })
 
   it('should throw error when a branch with no layers is passed to next', function () {
-    const branch = new Chain()
-    const chain = new Chain()
+    const branch = new Controller()
+    const chain = new Controller()
 
     chain.do((req, res, next, errCb, data) => {
       next(branch)
@@ -434,10 +434,10 @@ describe('Test ChainController creation', function () {
   })
 
   it('should run a chain as promise', async () => {
-    const branch1 = new Chain()
-    const branch2 = new Chain()
-    const chainError = new Chain()
-    const chainOk = new Chain()
+    const branch1 = new Controller()
+    const branch2 = new Controller()
+    const chainError = new Controller()
+    const chainOk = new Controller()
 
     const reqMock = {}
     const resMock = {}
@@ -473,7 +473,7 @@ describe('Test ChainController creation', function () {
 
     const data1 = []
     try {
-      await promisify(chainError)(reqMock, resMock, data1)
+      await chainError.promise(reqMock, resMock, data1)
     } catch (error) {
       expect(error[0]).to.equal('passBranch1')
       expect(error[1]).to.equal('passBranch2')
@@ -482,7 +482,7 @@ describe('Test ChainController creation', function () {
     }
 
     const data2 = []
-    const response = await promisify(chainOk)(reqMock, resMock, data2)
+    const response = await chainOk.promise(reqMock, resMock, data2)
     expect(response[0]).to.equal('passBranch1')
     expect(response[1]).to.equal('passBranch2')
     expect(response[2]).to.equal('ok')
