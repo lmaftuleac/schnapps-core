@@ -53,7 +53,7 @@ similar to express, `next()` triggers next handler, with a small difference: ins
  * @param  {Any} data Data object passed from previous handler
  */
 const next = function (data) {
-	// do something here
+  // triggers next handler, with data as input
 };
 /**
  * OR
@@ -62,7 +62,7 @@ const next = function (data) {
  * @param  {Object} options         option object { reroute: <boolean> } Optional 
  */
 const next = function (controller, data, options) {
-	// do something here
+	// triggers controller handlers, with data as input
 };
 ```
 
@@ -100,8 +100,8 @@ GetUserController
 
 ```
 
-In case we want to re-use another controller, pass controller as first parameter and data as second. 
-In this case however only the handlers will be called from `GetUserController` without calling `.end()` or `.catch()` since parent controller has it's own end and catch functions.
+In case we want to re-use another controller, pass it as first parameter and data as second. 
+In this case however, only the handlers will be called in `GetUserController` without `.end()` or `.catch()` since parent controller has it's own `end` and `catch` functions.
 
 ```javascript
 Controller = new Controller()
@@ -134,7 +134,7 @@ Controller
   })
 
 ```
-In case we want to completely reroute our request, we need to pas a third parameter with `{ reroute: true }`. In this case request will be completely handled by the controller passed in `next()` function, and the handlers below will be ignored along with `.catch` and `.end` functions
+In case we need to reroute our request completely, we need to pas a third parameter with `{ reroute: true }`. Further executions will be completeley handled by the child controller. Handlers in parent controller below rerouting, will be ignored along with `.catch` and `.end` functions
 
 
 ```javascript
