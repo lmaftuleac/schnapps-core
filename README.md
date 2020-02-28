@@ -24,7 +24,7 @@ express.get('/', (req, res) => Controller(req, res, {data: 'some-initial-data'})
 ```
 
 ### Handler function
-A handler is a function similar to a [middleware]: https://expressjs.com/en/guide/using-middleware.html in express. Therefore the following statement also applies for controller-chain handlers:
+A handler is a function similar to a [middleware](https://expressjs.com/en/guide/using-middleware.html) in express. Therefore the following statement also applies for controller-chain handlers:
 
 ```
 Middleware functions are functions that have access to the request object (req), the response object (res), and the next middleware function in the application’s request-response cycle. The next middleware function is commonly denoted by a variable named next.
@@ -325,7 +325,7 @@ Run tests
 npm test
 ```
 
-For a [nyc]: https://www.npmjs.com/package/nyc html report
+For a [nyc](https://www.npmjs.com/package/nyc) html report
 ```
 npm test:nyc
 ```
