@@ -271,7 +271,7 @@ express.get('/user/:ver', async (req, res) => {
   const { ver } = req.params
   
   try {
-    data = await promisify(MainController)(req, res, { ver })
+    data = await MainController.promise(req, res, { ver })
     res.send(data)
   } catch(error) {
     res.send(error)
