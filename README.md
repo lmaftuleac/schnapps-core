@@ -150,13 +150,13 @@ Controller
     }
   })
   .do((req, res, next, errCb, user) => {
-    // this will be ignored
+    // will be ignored
   })
   .end((req, res, errCb, user) => {
-    // this will be ignored
+    // will be ignored
   })
   .catch((req, res, error) => {
-    // this will be ignored
+    // will be ignored
   })
 
 ```
