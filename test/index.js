@@ -496,4 +496,34 @@ describe('Test ChainController creation', function () {
     expect(data3[3]).to.equal('not_called_on_promise')
     expect(data3.length).to.equal(4)
   })
+
+  it('should run a chain as express middleware', async () => {
+    const chainOk = new Controller()
+
+    const reqMock = {}
+    const resMock = {}
+    const data = []
+
+    chainOk
+      .do((req, res, next, errCb) => {
+        next(data)
+      })
+      .do((req, res, next, errCb, data) => {
+        data.push('ok')
+        next(data)
+      })
+      .end((req, res, errCb, data) => {
+        data.push('not_called_on_middlewares')
+      })
+
+    const middleware = chainOk.toMiddleware()
+    const next = () => {
+      data.push('express_next_called')
+    }
+    expect(typeof middleware).to.equal('function')
+    middleware(reqMock, resMock, next)
+
+    expect(data[0]).to.equal('ok')
+    expect(data[1]).to.equal('express_next_called')
+  })
 })

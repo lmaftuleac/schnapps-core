@@ -20,11 +20,13 @@ class Controller {
     this.getFirstNode = this.getFirstNode.bind(this)
     this.getLastNode = this.getLastNode.bind(this)
     this.promise = this.promise.bind(this)
+    this.toMiddleware = this.toMiddleware.bind(this)
 
     this.init.nodes = this.nodes
     this.init.getFirstNode = this.getFirstNode
     this.init.getLastNode = this.getLastNode
     this.init.promise = this.promise
+    this.init.toMiddleware = this.toMiddleware
     this.init.do = this.do
     this.init.catch = this.catch
     this.init.end = this.end
@@ -112,6 +114,14 @@ class Controller {
       this.cloneNodes(childBranch.nodes)
     }
     return this.init
+  }
+
+  toMiddleware () {
+    return (req, res, expressNext) => {
+      const firstNode = this.getFirstNode()
+      const doneCb = () => expressNext()
+      callNode(req, res, firstNode, {}, Controller.__errorHandler, doneCb)
+    }
   }
 
   promise (req, res, data) {

@@ -280,6 +280,30 @@ express.get('/user/:ver', async (req, res) => {
 
 ```
 
+### Using .toMiddleware()
+
+`chain.toMiddleware()` returns a middleware functions compatible with express
+
+```javascript
+const Controller = require('controller-chain')
+
+const controllerA = new Controller()
+const controllerB = new Controller()
+
+controllerA
+  .do(( req, res, next, errCb, data) => {
+    // do some stuff
+  })
+
+controllerB
+  .do(( req, res, next, errCb, data) => {
+    // do some stuff
+  })
+
+express.get('/user/:ver', controllerA.toMiddleware(), controllerB.toMiddleware())
+
+```
+
 ### Global Error Handler
 
 Provide a global error handler
