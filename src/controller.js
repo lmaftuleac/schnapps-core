@@ -120,7 +120,8 @@ class Controller {
     return (req, res, expressNext) => {
       const firstNode = this.getFirstNode()
       const doneCb = () => expressNext()
-      callNode(req, res, firstNode, {}, Controller.__errorHandler, doneCb)
+      const errCb = (err) => Controller.__errorHandler(req, res, err)
+      callNode(req, res, firstNode, {}, errCb, doneCb)
     }
   }
 
