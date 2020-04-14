@@ -1,6 +1,6 @@
 {
-  "name": "controller-chain",
-  "version": "2.2.1",
+  "name": "@schnapps/controller",
+  "version": "1.0.1",
   "description": "Chain services similar to express middleware into a single controller, supports branching and error handling",
   "main": "index.js",
   "scripts": {
@@ -9,10 +9,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/lmaftuleac/controller-chain"
+    "url": "git+https://github.com/lmaftuleac/schnapps-controller.git"
   },
   "keywords": [
-    "controller-chain",
+    "schnapps-controller",
     "express",
     "controller",
     "chain"
@@ -20,12 +20,15 @@
   "author": "Liviu Maftuleac <liviu.maftuleac@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/lmaftuleac/controller-chain"
+    "url": "https://github.com/lmaftuleac/schnapps-controller"
   },
-  "homepage": "https://github.com/lmaftuleac/controller-chain#readme",
+  "homepage": "https://github.com/lmaftuleac/schnapps-controller#readme",
   "devDependencies": {
     "chai": "^4.2.0",
     "mocha": "^7.0.1",
     "nyc": "^15.0.0"
+  },
+  "directories": {
+    "test": "test"
   }
 }

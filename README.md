@@ -1,10 +1,10 @@
-Chain multiple services into a single controller, similar to express middleware. Supports branching and error handling. Unlike express middleware, `controller-chain` allows to pass data through next() function. This allows to create re-usable services and re-usable service sequences.
+Chain multiple services into a single controller, similar to express middleware. Supports branching and error handling. Unlike express middleware, `@schnapps/controller` allows to pass data through next() function. This allows to create re-usable services and re-usable service sequences.
 
 ### Controller Object
 A controller is an object that chains multiple handlers together. It can be regarded as a wrapper that chains a set of handlers (services) in a specific order
 
 ```javascript
-const  Controller = require('controller-chain')
+const  Controller = require('@schnapps/controller')
 
 // Create a new controller
 const Controller = new Controller()
@@ -24,7 +24,7 @@ express.get('/', (req, res) => Controller(req, res, {data: 'some-initial-data'})
 ```
 
 ### Handler function
-A handler function similar to a [middleware](https://expressjs.com/en/guide/using-middleware.html) in express. The following statement is also true for controller-chain handlers:
+A handler function similar to a [middleware](https://expressjs.com/en/guide/using-middleware.html) in express. The following statement is also true for controller handlers:
 
 `
 Middleware functions are functions that have access to the request object (req), the response object (res), and the next middleware function in the application’s request-response cycle. The next middleware function is commonly denoted by a variable named next. If the current middleware function does not end the request-response cycle, it must call next() to pass control to the next middleware function. Otherwise, the request will be left hanging.
@@ -45,7 +45,7 @@ const handler = function (req, res, next, errCb, data) {
 ```
 
 ### Using next()
-similar to express, `next()` triggers next handler, with a small difference: instead of passing an error (in express) it passes data to the next handler. We can also use next() re-chain to another controller
+similar to express, `next()` triggers next handler, with a small difference: instead of passing an error (in express) it passes data to the next handler. We can also use next() to re-chain to another controller
 
 ```javascript
 /**
@@ -167,7 +167,7 @@ Error callback is used to pass errors in handlers; A call to errorCb will stop c
 ### Using Branches
 
 ```javascript
-const  Controller = require('controller-chain')
+const  Controller = require('@schnapps/controller')
 
 const MainController = new Controller()
 const BranchA = new Controller()
@@ -230,7 +230,7 @@ express.get('/return-A', (req, res) => {
 use `chain.promise(req, res, data)` to call a chain as a promise
 
 ```javascript
-const Controller = require('controller-chain')
+const Controller = require('@schnapps/controller')
 
 const MainController = new Controller()
 const BranchA = new Controller()
@@ -285,7 +285,7 @@ express.get('/user/:ver', async (req, res) => {
 `chain.toMiddleware()` returns a middleware functions compatible with express
 
 ```javascript
-const Controller = require('controller-chain')
+const Controller = require('@schnapps/controller')
 
 const controllerA = new Controller()
 const controllerB = new Controller()
@@ -309,7 +309,7 @@ express.get('/user/:ver', controllerA.toMiddleware(), controllerB.toMiddleware()
 Provide a global error handler
 
 ```javascript
-const  Controller = require('controller-chain')
+const  Controller = require('@schnapps/controller')
 
 Chain.setDefaultErrorHandler((req, res, error) => {
   // hanlde error
