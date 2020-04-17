@@ -4,6 +4,9 @@ const BRANCH_OPTS = {
   reroute: false
 }
 
+const isHandler = (fn) => typeof fn === 'function' && !(fn.__self__ instanceof Controller)
+const isController = (fn) => (typeof fn === 'function' && fn.__self__ instanceof Controller)
+
 class Controller {
   constructor () {
     const self = this
@@ -14,6 +17,7 @@ class Controller {
     this.init = (...args) => {
       return this.start.apply(self, args)
     }
+    this.beforeAll = this.beforeAll.bind(this)
     this.do = this.do.bind(this)
     this.catch = this.catch.bind(this)
     this.end = this.end.bind(this)
@@ -27,6 +31,7 @@ class Controller {
     this.init.getLastNode = this.getLastNode
     this.init.promise = this.promise
     this.init.toMiddleware = this.toMiddleware
+    this.init.beforeAll = this.beforeAll
     this.init.do = this.do
     this.init.catch = this.catch
     this.init.end = this.end
@@ -74,7 +79,7 @@ class Controller {
     }
   }
 
-  addNode (node) {
+  pushNode (node) {
     const lastNode = this.getLastNode()
     if (lastNode) {
       lastNode.link(node)
@@ -82,28 +87,38 @@ class Controller {
     this.nodes.push(node)
   }
 
-  cloneNodes (nodes) {
+  unshiftNode (node) {
+    const firstNode = this.getFirstNode()
+    if (firstNode) {
+      node.link(firstNode)
+    }
+    this.nodes.unshift(node)
+  }
+
+  appendNodes (nodes) {
     nodes.forEach((node) => {
       const { handler } = node
       const nodeCopy = new LayerNode(handler)
-      this.addNode(nodeCopy)
+      this.pushNode(nodeCopy)
+    })
+  }
+
+  prependNodes (nodes) {
+    nodes.slice().reverse().forEach((node) => {
+      const { handler } = node
+      const nodeCopy = new LayerNode(handler)
+      this.unshiftNode(nodeCopy)
     })
   }
 
   /** Public */
 
-  do (handler) {
-    if (
-      typeof handler === 'function' &&
-      !(handler.__self__ instanceof Controller)
-    ) {
+  beforeAll (handler) {
+    if (isHandler(handler)) {
       // include handler function
       const node = new LayerNode(handler)
-      this.addNode(node)
-    } else if (
-      typeof handler === 'function' &&
-      handler.__self__ instanceof Controller
-    ) {
+      this.unshiftNode(node)
+    } else if (isController(handler)) {
       // include another Controller
       const childBranch = handler
 
@@ -111,7 +126,25 @@ class Controller {
         throw new Error('Provided branch does not have nodes')
       }
 
-      this.cloneNodes(childBranch.nodes)
+      this.prependNodes(childBranch.nodes)
+    }
+    return this.init
+  }
+
+  do (handler) {
+    if (isHandler(handler)) {
+      // include handler function
+      const node = new LayerNode(handler)
+      this.pushNode(node)
+    } else if (isController(handler)) {
+      // include another Controller
+      const childBranch = handler
+
+      if (!childBranch.nodes.length) {
+        throw new Error('Provided branch does not have nodes')
+      }
+
+      this.appendNodes(childBranch.nodes)
     }
     return this.init
   }

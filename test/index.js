@@ -3,7 +3,7 @@ const { expect } = require('chai')
 const Controller = require('../index')
 const LayerNode = require('../src/layer-node')
 
-describe('Test ChainController creation', function () {
+describe('Test Controller creation', function () {
   it('should create chainable controller', function () {
     const chain = new Controller()
 
@@ -283,6 +283,80 @@ describe('Test ChainController creation', function () {
     expect(data2[5]).to.equal('chain2_end')
     expect(data2[6]).to.equal('chain2_error')
     expect(data2.length).to.equal(7)
+  })
+
+  it('should include handlers using beforeAll', function () {
+    const chain = new Controller()
+
+    const reqMock = {}
+    const resMock = {}
+
+    chain
+      .do((req, res, next, errCb, data) => {
+        data.push('handler_1')
+        next(data)
+      })
+      .do((req, res, next, errCb, data) => {
+        data.push('handler_2')
+        next(data)
+      })
+      .beforeAll((req, res, next, errCb, data) => {
+        data.push('handler_3')
+        next(data)
+      })
+      .beforeAll((req, res, next, errCb, data) => {
+        data.push('handler_4')
+        next(data)
+      })
+      .do((req, res, next, errCb, data) => {
+        data.push('handler_5')
+        next(data)
+      })
+
+    const data = []
+    chain(reqMock, resMock, data)
+    expect(data[0]).to.equal('handler_4')
+    expect(data[1]).to.equal('handler_3')
+    expect(data[2]).to.equal('handler_1')
+    expect(data[3]).to.equal('handler_2')
+    expect(data[4]).to.equal('handler_5')
+  })
+
+  it('should include branches using beforeAll', function () {
+    const chain = new Controller()
+    const branch1 = new Controller()
+    const branch2 = new Controller()
+
+    const reqMock = {}
+    const resMock = {}
+
+    branch1
+      .do((req, res, next, errCb, data) => {
+        data.push('branch1_handler_1')
+        next(data)
+      })
+      .do((req, res, next, errCb, data) => {
+        data.push('branch1_handler_2')
+        next(data)
+      })
+
+    branch2.do((req, res, next, errCb, data) => {
+      data.push('branch2')
+      next(data)
+    })
+
+    chain
+      .do(branch1)
+      .beforeAll(branch2)
+      .do((req, res, next, errCb, data) => {
+        data.push('chain1_handler_2')
+      })
+
+    const data = []
+    chain(reqMock, resMock, data)
+    expect(data[0]).to.equal('branch2')
+    expect(data[1]).to.equal('branch1_handler_1')
+    expect(data[2]).to.equal('branch1_handler_2')
   })
 
   it('should use a global error handler', function () {
