@@ -1,5 +1,8 @@
-example
 node_modules
 coverage
 .vscode
 .nyc_output
+index.ts
+src
+test
+.tsconfig

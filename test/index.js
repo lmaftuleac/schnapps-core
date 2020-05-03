@@ -1,43 +1,41 @@
 /* eslint-disable no-undef */
 const { expect } = require('chai')
-const Controller = require('../index')
-const LayerNode = require('../src/layer-node')
+const { controller } = require('../dist')
+const { ControllerBackbone } = require('../dist/src/controller-backbone')
+const { LayerNode } = require('../dist/src/layer-node')
 
 describe('Test Controller creation', function () {
   it('should create chainable controller', function () {
-    const chain = new Controller()
+    const chain = controller()
 
-    expect(chain.nodes).to.be.an('array')
     expect(typeof chain).to.equal('function')
     expect(typeof chain.catch).to.equal('function')
     expect(typeof chain.end).to.equal('function')
-    expect(typeof chain.getFirstNode).to.equal('function')
-    expect(typeof chain.getLastNode).to.equal('function')
     expect(typeof chain.do).to.equal('function')
-    expect(chain.__self__ instanceof Controller).to.be.equal(true)
+    expect(chain.backbone instanceof ControllerBackbone).to.be.equal(true)
   })
 
   it('should add nodes to chain', function () {
-    const chain = new Controller()
+    const chain = controller()
     const handler1 = (req, res, next, errCb, data) => {}
     const handler2 = (req, res, next, errCb, data) => {}
 
-    expect(chain.nodes.length).to.equal(0)
+    expect(chain.backbone.nodes.length).to.equal(0)
     chain.do(handler1)
-    expect(chain.nodes.length).to.equal(1)
+    expect(chain.backbone.nodes.length).to.equal(1)
 
-    const layerNode = chain.getFirstNode()
+    const layerNode = chain.backbone.getFirstNode()
 
     expect(layerNode instanceof LayerNode).to.equal(true)
     expect(layerNode.handler).to.equal(handler1)
     expect(layerNode.nextNode).to.equal(null)
     chain.do(handler2)
-    expect(chain.nodes.length).to.equal(2)
+    expect(chain.backbone.nodes.length).to.equal(2)
     expect(layerNode.nextNode instanceof LayerNode).to.equal(true)
   })
 
   it('should add handlers to chain', function () {
-    const chain = new Controller()
+    const chain = controller()
     const reqMock = {}
     const resMock = {}
     const initialData = {
@@ -78,7 +76,7 @@ describe('Test Controller creation', function () {
     const responseAfterDo = chain.do(handler1)
     expect(typeof responseAfterDo).to.equal('function')
     expect(typeof responseAfterDo.do).to.equal('function')
-    expect(responseAfterDo.__self__ instanceof Controller).to.equal(true)
+    expect(responseAfterDo.backbone instanceof ControllerBackbone).to.equal(true)
 
     chain
       .do(handler2)
@@ -87,8 +85,8 @@ describe('Test Controller creation', function () {
   })
 
   it('should use a branch using next', function () {
-    const chain = new Controller()
-    const branch = new Controller()
+    const chain = controller()
+    const branch = controller()
 
     const reqMock = {}
     const resMock = {}
@@ -121,8 +119,8 @@ describe('Test Controller creation', function () {
   })
 
   it('should reroute to branch using next', function () {
-    const chain = new Controller()
-    const branch = new Controller()
+    const chain = controller()
+    const branch = controller()
 
     const reqMock = {}
     const resMock = {}
@@ -159,9 +157,9 @@ describe('Test Controller creation', function () {
   })
 
   it('should include branch directly into chain', function () {
-    const chain = new Controller()
-    const branch1 = new Controller()
-    const branch2 = new Controller()
+    const chain = controller()
+    const branch1 = controller()
+    const branch2 = controller()
 
     const reqMock = {}
     const resMock = {}
@@ -206,10 +204,10 @@ describe('Test Controller creation', function () {
   })
 
   it('should include branches in many chains', function () {
-    const chain1 = new Controller()
-    const chain2 = new Controller()
-    const branch1 = new Controller()
-    const branch2 = new Controller()
+    const chain1 = controller()
+    const chain2 = controller()
+    const branch1 = controller()
+    const branch2 = controller()
 
     const reqMock = {}
     const resMock = {}
@@ -286,7 +284,7 @@ describe('Test Controller creation', function () {
   })
 
   it('should include handlers using beforeAll', function () {
-    const chain = new Controller()
+    const chain = controller()
 
     const reqMock = {}
     const resMock = {}
@@ -323,9 +321,9 @@ describe('Test Controller creation', function () {
   })
 
   it('should include branches using beforeAll', function () {
-    const chain = new Controller()
-    const branch1 = new Controller()
-    const branch2 = new Controller()
+    const chain = controller()
+    const branch1 = controller()
+    const branch2 = controller()
 
     const reqMock = {}
     const resMock = {}
@@ -360,13 +358,13 @@ describe('Test Controller creation', function () {
   })
 
   it('should use a global error handler', function () {
-    const chain = new Controller()
-    const branch1 = new Controller()
+    const chain = controller()
+    const branch1 = controller()
 
     const reqMock = {}
     const resMock = {}
 
-    Controller.setDefaultErrorHandler((req, res, data) => {
+    controller.setDefaultErrorHandler((req, res, data) => {
       data.catchErrorInGlobalHandler = true
     })
 
@@ -403,7 +401,7 @@ describe('Test Controller creation', function () {
   })
 
   it('should throw error on double next calls', function () {
-    const chain = new Controller()
+    const chain = controller()
     const reqMock = {}
     const resMock = {}
 
@@ -420,7 +418,7 @@ describe('Test Controller creation', function () {
   })
 
   it('should throw error on double error calls', function () {
-    const chain = new Controller()
+    const chain = controller()
     const reqMock = {}
     const resMock = {}
 
@@ -437,7 +435,7 @@ describe('Test Controller creation', function () {
   })
 
   it('should throw error on call error after next', function () {
-    const chain = new Controller()
+    const chain = controller()
     const reqMock = {}
     const resMock = {}
 
@@ -454,7 +452,7 @@ describe('Test Controller creation', function () {
   })
 
   it('should throw error on call error after next', function () {
-    const chain = new Controller()
+    const chain = controller()
     const reqMock = {}
     const resMock = {}
 
@@ -471,7 +469,7 @@ describe('Test Controller creation', function () {
   })
 
   it('should throw error on chains with no handlers', function () {
-    const chain = new Controller()
+    const chain = controller()
     const reqMock = {}
     const resMock = {}
 
@@ -493,8 +491,8 @@ describe('Test Controller creation', function () {
   })
 
   it('should throw error when a branch with no layers is passed to next', function () {
-    const branch = new Controller()
-    const chain = new Controller()
+    const branch = controller()
+    const chain = controller()
 
     chain.do((req, res, next, errCb, data) => {
       next(branch)
@@ -508,10 +506,10 @@ describe('Test Controller creation', function () {
   })
 
   it('should run a chain as promise', async () => {
-    const branch1 = new Controller()
-    const branch2 = new Controller()
-    const chainError = new Controller()
-    const chainOk = new Controller()
+    const branch1 = controller()
+    const branch2 = controller()
+    const chainError = controller()
+    const chainOk = controller()
 
     const reqMock = {}
     const resMock = {}
@@ -572,7 +570,7 @@ describe('Test Controller creation', function () {
   })
 
   it('should run a chain as express middleware', async () => {
-    const chainOk = new Controller()
+    const chainOk = controller()
 
     const reqMock = {}
     const resMock = {}
