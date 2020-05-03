@@ -15,6 +15,7 @@
     "url": "git+https://github.com/lmaftuleac/schnapps-controller.git"
   },
   "keywords": [
+    "schnapps",
     "schnapps-controller",
     "express",
     "controller",
