@@ -3,6 +3,6 @@ coverage
 .vscode
 .nyc_output
 index.ts
-src
+/src
 test
 .tsconfig
