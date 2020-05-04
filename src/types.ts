@@ -71,7 +71,3 @@ export interface ControllerInitiator {
   (): ControllerFunction
   setDefaultErrorHandler: Function
 }
-
-export interface InitiationFunction {
-  (request: RequestObj, response: ResponseObj, data: any): void;
-}

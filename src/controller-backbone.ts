@@ -11,7 +11,6 @@ import {
   HandlerFunction,
   NextFunction,
   BranchInputOptions,
-  InitiationFunction
 } from './types'
 
 const BRANCH_OPTS: BranchInputOptions = {
@@ -126,7 +125,7 @@ export class ControllerBackbone implements ControllerBackboneClass {
     return this.controller
   }
 
-  do (handler: HandlerFunction | ControllerFunction | any) {
+  do (handler: HandlerFunction | ControllerFunction) {
     if (isHandler(handler)) {
       // include handler function
       const node = new LayerNode(handler)
