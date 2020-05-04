@@ -10,10 +10,10 @@ import {
   CatchErrorCallback,
   HandlerFunction,
   NextFunction,
-  BranchInputOptions,
+  BranchOptions,
 } from './types'
 
-const BRANCH_OPTS: BranchInputOptions = {
+const BRANCH_OPTS: BranchOptions = {
   reroute: false
 }
 
@@ -107,7 +107,7 @@ export class ControllerBackbone implements ControllerBackboneClass {
 
   /** Public */
 
-  beforeAll (handler: HandlerFunction | ControllerFunction | any) {
+  beforeAll (handler) {
     if (isHandler(handler)) {
       // include handler function
       const node = new LayerNode(handler)
@@ -125,8 +125,9 @@ export class ControllerBackbone implements ControllerBackboneClass {
     return this.controller
   }
 
-  do (handler: HandlerFunction | ControllerFunction) {
+  do (handler) {
     if (isHandler(handler)) {
+      
       // include handler function
       const node = new LayerNode(handler)
       this.pushNode(node)

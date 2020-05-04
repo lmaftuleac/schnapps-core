@@ -8,14 +8,22 @@ export interface ControllerBackboneClass {
   controller: ControllerFunction | null
   endCallback: EndChainCallback | null
   catchCallback: CatchErrorCallback | null
-  start?: any
-  pushNode?: any
-  unshiftNode?: any
-  appendNodes?: any
-  prependNodes?: any  
+  start: { (req: RequestObj, res: ResponseObj, data: any): void }
+  getFirstNode: { (): LayerNodeType | undefined }
+  getLastNode: { (): LayerNodeType | undefined }
+  pushNode: { (node: LayerNodeType): void }
+  unshiftNode: { (node: LayerNodeType): void }
+  appendNodes: { (nodes: LayerNodeType[]): void }
+  prependNodes: { (nodes: LayerNodeType[]): void }
 
-  do: { (param: HandlerFunction | ControllerFunction ): ControllerFunction }
-  beforeAll: { (param: HandlerFunction | ControllerFunction ): ControllerFunction }
+  do: {
+    (handler: HandlerFunction): ControllerFunction 
+    (controller: ControllerFunction): ControllerFunction 
+  }
+  beforeAll: {
+    (handler: HandlerFunction): ControllerFunction 
+    (controller: ControllerFunction): ControllerFunction 
+  }
   catch: { (errorCallback: CatchErrorCallback ): ControllerFunction }
   end: { (errorCallback: EndChainCallback ): ControllerFunction }
   toMiddleware: { (): Function } 
@@ -60,10 +68,11 @@ export interface EndChainCallback {
 }
 
 export interface NextFunction {
-  (arg: any | ControllerFunction, d?: any, opts?: BranchInputOptions ): void
+  (data: any): void
+  (controller: ControllerFunction, data?: any, opts?: BranchOptions ): void
 }
 
-export interface BranchInputOptions {
+export interface BranchOptions {
   reroute?: Boolean
 }
 

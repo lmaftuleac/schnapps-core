@@ -4,14 +4,14 @@ Chain multiple services into a single controller, similar to express middleware.
 A controller is an object that chains multiple handlers together. It can be regarded as a wrapper that chains a set of handlers (services) in a specific order
 
 ```javascript
-const  Controller = require('@schnapps/controller')
+const  { controller } = require('@schnapps/controller')
 
 // Create a new controller
-const Controller = new Controller()
+const myController = controller()
 
 // add handlers
-Controller
-  .do(handler) 
+myController
+  .do(handler)
   .do(handler)
   .do(handler)
   /* optional */
@@ -19,12 +19,12 @@ Controller
   .catch(errorHandler)
 
 // use with express
-express.get('/', (req, res) => Controller(req, res, {data: 'some-initial-data'}))
+express.get('/', (req, res) => myController(req, res, {data: 'some-initial-data'}))
 
 ```
 
 ### Handler function
-A handler function similar to a [middleware](https://expressjs.com/en/guide/using-middleware.html) in express. The following statement is also true for controller handlers:
+A handler function similar to a [middleware](https://expressjs.com/en/guide/using-middleware.html) in express. The following statement is also true for handler functions
 
 `
 Middleware functions are functions that have access to the request object (req), the response object (res), and the next middleware function in the application’s request-response cycle. The next middleware function is commonly denoted by a variable named next. If the current middleware function does not end the request-response cycle, it must call next() to pass control to the next middleware function. Otherwise, the request will be left hanging.
@@ -45,25 +45,25 @@ const handler = function (req, res, next, errCb, data) {
 ```
 
 ### Using next()
-similar to express, `next()` triggers next handler, with a small difference: instead of passing an error (in express) it passes data to the next handler. We can also use next() to re-chain to another controller
+similar to express, `next()` triggers next handler, except instead of passing an error (in express) it passes data to the next handler. We can also use next() to re-use to another controller
 
 ```javascript
 /**
  * Next function
  * @param  {Any} data Data object passed from previous handler
  */
-const next = function (data) {
-  // triggers next handler, with data as input
-};
+// triggers next handler, with data as input
+next(data)
+
 /**
  * OR
- * @param  {Controller} controller  another controller object
- * @param  {Any} data               data passed to controller. Optional
- * @param  {Object} options         option object { reroute: <boolean> } Optional 
+ * @param  {Controller} controller    another controller instance
+ * @param  {Any} data                 data passed to controller. Optional
+ * @param  {BranchOptions} options    option object { reroute: <boolean> } Optional 
  */
-const next = function (controller, data, options) {
-	// triggers controller handlers, with data as input
-};
+// triggers controller handlers, with data as input
+next(controller, data, options)
+
 ```
 
 ```javascript
@@ -86,9 +86,9 @@ const getUserHandler = async (req, res, next, errCb, { userId }) => {
   }
 }
 
-const GetUserController = new Controller();
+const GetUserDetails = controller();
 
-GetUserController
+GetUserDetails
   .do(getUserIdHandler)
   .do(getUserHandler)
   .end((req, res, errCb, user) => {
@@ -101,18 +101,18 @@ GetUserController
 ```
 
 In case we want to re-use another controller, pass it as first parameter and data as second. 
-In this case however, only the handlers will be called in `GetUserController` without `.end()` or `.catch()` since parent controller has it's own `end` and `catch` functions.
+In this case however, only the handlers will be called in `GetUserDetails` without `.end()` or `.catch()` since we want the controller to act as a part of parent controller
 
 ```javascript
-Controller = new Controller()
+const UserController = controller()
 
-Controller
+UserController
   .do((req, res, next, errCb, user) => {
     if (req.body.userId) {
-      // here second parameter is optional
+      // second parameter is optional
       next(
-        GetUserController,  // controller chain
-        { foo: 'bar' },     // some data
+        GetUserDetails,  // call GetUserDetails's handlers
+        { foo: 'bar' },  // some data that can be used in
       )
     } else {
       errCb({
@@ -122,7 +122,7 @@ Controller
     }
   })
   .do((req, res, next, errCb, user) => {
-    // received user here
+    // received user here from GetUserDetails
     // do some stuff
     next(user)
   })
@@ -130,6 +130,7 @@ Controller
     res.status(200).send(user)
   })
   .catch((req, res, error) => {
+    // errors from GetUserDetails will be caught here
     res.status(error.status).send(error.message)
   })
 
@@ -138,12 +139,12 @@ In case we need to reroute our request completely, we need to pas a third parame
 
 
 ```javascript
-Controller = new Controller()
+const UserController = controller()
 
-Controller
+UserController
   .do((req, res, next, errCb, user) => {
       next(
-        GetUserController,  // controller chain
+        GetUserDetails,     // controller
         { foo: 'bar' },     // some data
         { reroute: true }   // reroute to GetUserController
       )
@@ -162,16 +163,57 @@ Controller
 ```
 ### Using ErrorCallback
 
-Error callback is used to pass errors in handlers; A call to errorCb will stop chain execution and redirect to `.catch()` function. If `.catch` was not defined in controller it will be redirected to `globalErrorHandler`.
+Error callback is used to catch errors in handlers; A call to errorCb will stop chain execution and redirect to `.catch()` function. If `.catch` was not defined in controller it will be redirected to `globalErrorHandler`.
 
-### Using Branches
+
+### Global Error Handler
+
+Provide a global error handler
 
 ```javascript
-const  Controller = require('@schnapps/controller')
+const { controller } = require('@schnapps/controller')
 
-const MainController = new Controller()
-const BranchA = new Controller()
-const BranchB = new Controller()
+controller.setDefaultErrorHandler((req, res, error) => {
+  // all errors will be caught here
+  res.status(error.status).send(error.message)
+})
+
+const firstController = controller()
+const secondController = controller()
+
+firstController
+  .do((req, res, next, errCb, data) => {
+    errCb({ status: 500, message: 'Error in Controller 1' })
+  })
+
+secondController
+  .do((req, res, next, errCb, data) => {
+    errCb({ status: 500, message: 'Error in Controller 2' })
+  })
+
+
+// connect to express
+express.get('/something-1', (req, res) => {
+  firstController(req, res)
+})
+
+express.get('/something-2', async (req, res) => {
+  secondController(req, res)
+})
+
+```
+
+### Nested Controllers
+Controllers can be nested in a tree-like structure
+
+```javascript
+const { controller } = require('@schnapps/controller')
+
+const MainController = controller()
+const BranchA = controller()
+const BranchB = Controller()
+const BranchC = Controller()
+const BranchD = Controller()
 
 
 BranchA
@@ -181,11 +223,30 @@ BranchA
 
 BranchB
   .do(( req, res, next, errCb, data) => {
-    return res.send('controller B')
+    // randomly select a branch
+    if ( Math.floor(Math.random()*10 % 2) ) {
+      return next(BranchC, data)
+    } else {
+      return next(BranchD, data)
+    }
   })
 
-// add handlers, similar to express route.use
+BranchC
+  .do(( req, res, next, errCb, data) => {
+    return res.send('controller C')
+  })
+
+BranchD
+  .do(( req, res, next, errCb, data) => {
+    return res.send('controller D')
+  })
+
+// add handlers
 MainController
+  .do(( req, res, next, errCb, data) => {
+    const { ver } = req.params
+    return next({ ver })
+  })
   .do(( req, res, next, errCb, data) => {
     const { ver } = data;
 
@@ -204,24 +265,28 @@ MainController
     return errCb('Unknown Parameter')
   })
   .catch((req, res, error) => {
+    // catch all errors here
     res.status(500).send(error)
   })
 
-express.get('/user/:ver', (req, res) => {
-  const { ver } = req.params
-  MainController(req, res, { ver })
-})
+express.get('/user/:ver', MainController)
 
+```
+### Combining Controllers
 
-// OR pass a branch directly in do()
+Controllers can be combined directly using `do()`
 
-const SecondController = new Controller()
+```javascript
 
-SecondController.do(BranchA)
+const MainController = controller()
 
-express.get('/return-A', (req, res) => {
-  SecondController(req, res)
-})
+// passing controllers directly in do()
+MainController
+  .do(BranchA)
+  .do(BranchB)
+  .do(BranchC)
+
+express.get('/return-A', MainController)
 
 ```
 
@@ -230,11 +295,9 @@ express.get('/return-A', (req, res) => {
 use `chain.promise(req, res, data)` to call a chain as a promise
 
 ```javascript
-const Controller = require('@schnapps/controller')
-
-const MainController = new Controller()
-const BranchA = new Controller()
-const BranchB = new Controller()
+const MainController = controller()
+const BranchA = controller()
+const BranchB = controller()
 
 
 BranchA
@@ -285,10 +348,8 @@ express.get('/user/:ver', async (req, res) => {
 `chain.toMiddleware()` returns a middleware functions compatible with express
 
 ```javascript
-const Controller = require('@schnapps/controller')
-
-const controllerA = new Controller()
-const controllerB = new Controller()
+const controllerA = controller()
+const controllerB = controller()
 
 controllerA
   .do(( req, res, next, errCb, data) => {
@@ -304,42 +365,6 @@ express.get('/user/:ver', controllerA.toMiddleware(), controllerB.toMiddleware()
 
 ```
 
-### Global Error Handler
-
-Provide a global error handler
-
-```javascript
-const  Controller = require('@schnapps/controller')
-
-Chain.setDefaultErrorHandler((req, res, error) => {
-  // hanlde error
-  res.status(error.status).send(error.message)
-})
-
-const firstController = new Controller()
-const secondController = new Controller()
-
-firstController
-  .do((req, res, next, errCb, data) => {
-    errCb({ status: 500, message: 'Error in Controller 1' })
-  })
-
-secondController
-  .do((req, res, next, errCb, data) => {
-    errCb({ status: 500, message: 'Error in Controller 2' })
-  })
-
-
-// connect to express
-express.get('/something-1', (req, res) => {
-  firstController(req, res)
-})
-
-express.get('/something-2', async (req, res) => {
-  secondController(req, res)
-})
-
-```
 ---
 ### Run Tests
 
