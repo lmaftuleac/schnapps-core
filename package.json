@@ -1,9 +1,9 @@
 {
   "name": "@schnapps/controller",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Chain services similar to express middleware into a single controller, supports branching and error handling",
   "main": "dist/index.js",
-  "types": "dist/src/types.d.ts",
+  "types": "dist/index.d.ts",
   "prepublish": "tsc",
   "scripts": {
     "tsc": "tsc",

@@ -1,8 +1,8 @@
 /* eslint-disable no-undef */
 const { expect } = require('chai')
 const { controller } = require('../dist')
-const { ControllerBackbone } = require('../dist/src/controller-backbone')
-const { LayerNode } = require('../dist/src/layer-node')
+const { ControllerBackbone } = require('../dist/controller-backbone')
+const { LayerNode } = require('../dist/layer-node')
 
 describe('Test Controller creation', function () {
   it('should create chainable controller', function () {
