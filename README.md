@@ -50,7 +50,7 @@ similar to express, `next()` triggers next handler, except instead of passing an
 ```javascript
 /**
  * Next function
- * @param  {Any} data Data object passed from previous handler
+ * @param  {Any} data Any data will be used as input in the next handler
  */
 // triggers next handler, with data as input
 next(data)
@@ -58,10 +58,10 @@ next(data)
 /**
  * OR
  * @param  {Controller} controller    another controller instance
- * @param  {Any} data                 data passed to controller. Optional
- * @param  {BranchOptions} options    option object { reroute: <boolean> } Optional 
+ * @param  {Any=} data                data passed to controller. Optional
+ * @param  {BranchOptions=} options   branching options { reroute: <boolean> } Optional 
  */
-// triggers controller handlers, with data as input
+// triggers controller with data as input
 next(controller, data, options)
 
 ```
@@ -168,7 +168,7 @@ Error callback is used to catch errors in handlers; A call to errorCb will stop 
 
 ### Global Error Handler
 
-Provide a global error handler
+Provide a global error handler. Note that `setDefaultErrorHandler` is a static method and should be called directly from imported `controller` function
 
 ```javascript
 const { controller } = require('@schnapps/controller')
@@ -274,7 +274,7 @@ express.get('/user/:ver', MainController)
 ```
 ### Combining Controllers
 
-Controllers can be combined directly using `do()`
+Controllers can be combined directly using `do()` or `beforeAll()`. Similar to array's push vs unshift methods, you can controll where you need your handlers to be injected in the call chain
 
 ```javascript
 
@@ -282,9 +282,9 @@ const MainController = controller()
 
 // passing controllers directly in do()
 MainController
-  .do(BranchA)
   .do(BranchB)
   .do(BranchC)
+  .beforeAll(BranchA) // will get called first
 
 express.get('/return-A', MainController)
 
@@ -345,7 +345,7 @@ express.get('/user/:ver', async (req, res) => {
 
 ### Using .toMiddleware()
 
-`chain.toMiddleware()` returns a middleware functions compatible with express
+`chain.toMiddleware()` returns a middleware function compatible with express
 
 ```javascript
 const controllerA = controller()
