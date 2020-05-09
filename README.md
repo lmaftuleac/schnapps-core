@@ -1,4 +1,4 @@
-![Node.js Package](https://github.com/lmaftuleac/schnapps-controller/workflows/Node.js%20Package/badge.svg?branch=master)
+![Build](https://github.com/lmaftuleac/schnapps-controller/workflows/Node.js%20Package/badge.svg?branch=master)
 
 Chain multiple services into a single controller, similar to express middleware. Supports branching and error handling. Unlike express middleware, `@schnapps/controller` allows to pass data through next() function. This allows to create re-usable services and re-usable service sequences.
 
