@@ -598,4 +598,80 @@ describe('Test Controller creation', function () {
     expect(data[0]).to.equal('ok')
     expect(data[1]).to.equal('express_next_called')
   })
+
+  it('should create a controller with handlers as constructor input', async () => {
+
+    const handler1 = (req, res, next, errCb, data) => {
+      data.push('handler 1')
+      next(data)
+    }
+
+    const handler2 = (req, res, next, errCb, data) => {
+      data.push('handler 2')
+      next(data)
+    }
+    
+    const ctrl = controller(handler1, handler2)
+
+    const reqMock = {}
+    const resMock = {}
+    const data = []
+
+    ctrl
+      .end((req, res, errCb, data) => {
+        data.push('end')
+      })
+
+    ctrl(reqMock, resMock, data);
+    expect(data[0]).to.equal('handler 1')
+    expect(data[1]).to.equal('handler 2')
+    expect(data[2]).to.equal('end')
+  })
+  
+  it('should create a controller with other controllers as constructor input', async () => {
+
+    const handler1 = (req, res, next, errCb, data) => {
+      data.push('handler 1')
+      next(data)
+    }
+
+    const handler2 = (req, res, next, errCb, data) => {
+      data.push('handler 2')
+      next(data)
+    }
+    
+    const ctrl1 = controller()
+
+    ctrl1.do((req, res, next, errCb, data) => {
+      data.push('handler 3')
+      next(data);
+    })
+
+    const ctrl2 = controller(handler1, handler2, ctrl1)
+    
+
+    const reqMock = {}
+    const resMock = {}
+    const data = []
+
+    ctrl2
+      .end((req, res, errCb, data) => {
+        data.push('end')
+      })
+
+    ctrl2(reqMock, resMock, data);
+    expect(data[0]).to.equal('handler 1')
+    expect(data[1]).to.equal('handler 2')
+    expect(data[2]).to.equal('handler 3')
+    expect(data[3]).to.equal('end')
+  })
+  
+  it('should throw error if constructor input is not a valid handler', async () => {
+    try {
+      const ctrl = controller('bad input')
+    } catch( error ) {
+      expect(error.message).to.equal('Unknown type of handler provided')
+    }
+  })
+
 })

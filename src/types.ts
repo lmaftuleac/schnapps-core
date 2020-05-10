@@ -77,6 +77,6 @@ export interface BranchOptions {
 }
 
 export interface ControllerInitiator {
-  (): ControllerFunction
+  (...args: Array<HandlerFunction | ControllerFunction>): ControllerFunction
   setDefaultErrorHandler: Function
 }

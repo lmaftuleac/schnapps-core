@@ -4,7 +4,7 @@ import {
   ControllerFunction,
 } from './types'
 
-export const controller: ControllerInitiator = (): ControllerFunction => {
+export const controller: ControllerInitiator = (...handlers): ControllerFunction => {
   const instance = new ControllerBackbone()
   const controllerFn: ControllerFunction = instance.controller
   controllerFn.promise = instance.promise.bind(instance)
@@ -14,6 +14,10 @@ export const controller: ControllerInitiator = (): ControllerFunction => {
   controllerFn.catch = instance.catch.bind(instance)
   controllerFn.end = instance.end.bind(instance)
   controllerFn.backbone = instance
+
+  if (handlers && handlers.length) {
+    handlers.forEach(handler => controllerFn.do(handler))
+  }
 
   return controllerFn
 }

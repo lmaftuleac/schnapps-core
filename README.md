@@ -1,13 +1,13 @@
 ![Build](https://github.com/lmaftuleac/schnapps-controller/workflows/Build/badge.svg?branch=master)
 ![Test](https://github.com/lmaftuleac/schnapps-controller/workflows/Test/badge.svg?branch=master)
 
-Chain multiple services into a single controller, similar to express middleware. Supports branching and error handling. Unlike express middleware, `@schnapps/controller` allows to pass data through next() function. This allows to create re-usable services and re-usable service sequences.
+Chain multiple services into a single controller, similar to express middleware. Supports branching and error handling. Unlike express middleware, `@schnapps/core` allows to pass data through next() function. This allows to create re-usable services and re-usable service sequences.
 
 ### Controller Object
 A controller is an object that chains multiple handlers together. It can be regarded as a wrapper that chains a set of handlers (services) in a specific order
 
 ```javascript
-const  { controller } = require('@schnapps/controller')
+const  { controller } = require('@schnapps/core')
 
 // Create a new controller
 const myController = controller()
@@ -174,7 +174,7 @@ Error callback is used to catch errors in handlers; A call to errorCb will stop 
 Provide a global error handler. Note that `setDefaultErrorHandler` is a static method and should be called directly from imported `controller` function
 
 ```javascript
-const { controller } = require('@schnapps/controller')
+const { controller } = require('@schnapps/core')
 
 controller.setDefaultErrorHandler((req, res, error) => {
   // all errors will be caught here
@@ -210,7 +210,7 @@ express.get('/something-2', async (req, res) => {
 Controllers can be nested in a tree-like structure
 
 ```javascript
-const { controller } = require('@schnapps/controller')
+const { controller } = require('@schnapps/core')
 
 const MainController = controller()
 const BranchA = controller()
@@ -292,6 +292,57 @@ MainController
 express.get('/return-A', MainController)
 
 ```
+Controllers can have initial handlers passed directly in constructor function
+
+```javascript
+
+const firstHandler = (req, res, next, errCb, data) => {
+  // do something
+  return next()
+}
+
+const secondHandler = (req, res, next, errCb, data) => {
+  // do something
+  return next()
+}
+
+const MainController = controller(firstHandler, secondHandler)
+
+```
+Constructor function also accepts other controllers, the resulting controller will inherit all handlers from the parent
+
+```javascript
+
+const Parent = controller()
+
+Parent
+  .do(handler)
+  .do(handler)
+
+const CopyOfParent = controller(Parent)
+
+```
+
+```javascript
+
+const Parent1 = controller()
+
+Parent1
+  .do(handler)
+  .do(handler)
+
+const Parent2 = controller()
+
+Parent2
+  .do(handler)
+  .do(handler)
+
+const CombinedChildController = controller(Parent1, Parent2)
+
+```
+
+The constructor function accepts any number of handlers and controllers
+
 
 ### Using .promise()
 
