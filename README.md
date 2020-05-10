@@ -295,7 +295,7 @@ express.get('/return-A', MainController)
 
 ### Using .promise()
 
-use `chain.promise(req, res, data)` to call a chain as a promise
+use `myController.promise(req, res, data)` to call a chain as a promise
 
 ```javascript
 const MainController = controller()
