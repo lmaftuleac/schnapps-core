@@ -119,8 +119,9 @@ export class ControllerBackbone implements ControllerBackboneClass {
       if (!childNodes.length) {
         throw new Error('Provided branch does not have nodes')
       }
-
       this.prependNodes(childNodes)
+    } else {
+      throw new Error('Unknown type of handler provided')
     }
     return this.controller
   }
@@ -138,8 +139,9 @@ export class ControllerBackbone implements ControllerBackboneClass {
       if (!childNodes.length) {
         throw new Error('Provided branch does not have nodes')
       }
-
       this.appendNodes(childNodes)
+    } else {
+      throw new Error('Unknown type of handler provided')
     }
     return this.controller
   }
@@ -202,7 +204,7 @@ export class ControllerBackbone implements ControllerBackboneClass {
   }
 }
 
-const callNode = (req: ResponseObj, res: ResponseObj, node: LayerNodeType, customData: any, errCb: ErrorCallback, doneCb: Function) => {
+const callNode = (req: RequestObj, res: ResponseObj, node: LayerNodeType, customData: any, errCb: ErrorCallback, doneCb: Function) => {
   let errorCalled = false
   let nextCalled = false
 
