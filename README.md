@@ -36,8 +36,8 @@ Middleware functions are functions that have access to the request object (req),
 ```javascript
 /**
  * Handler function
- * @param  {Object} req         express request object
- * @param  {Object} res         express response object
+ * @param  {Object} req         request object
+ * @param  {Object} res         response object
  * @param  {Function} next      callback function, triggers next handler
  * @param  {Function} errorCb   error callback function.
  * @param  {Any} data           Data object passed from previous handler
@@ -292,7 +292,7 @@ MainController
 express.get('/return-A', MainController)
 
 ```
-Controllers can have initial handlers passed directly in constructor function
+Controllers can have handlers passed directly in constructor function
 
 ```javascript
 
@@ -309,7 +309,7 @@ const secondHandler = (req, res, next, errCb, data) => {
 const MainController = controller(firstHandler, secondHandler)
 
 ```
-Constructor function also accepts other controllers, the resulting controller will inherit all handlers from the parent
+Constructor function also accepts other controllers. The resulting controller will inherit all handlers from the parent
 
 ```javascript
 

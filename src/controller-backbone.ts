@@ -204,7 +204,7 @@ export class ControllerBackbone implements ControllerBackboneClass {
   }
 }
 
-const callNode = (req: ResponseObj, res: ResponseObj, node: LayerNodeType, customData: any, errCb: ErrorCallback, doneCb: Function) => {
+const callNode = (req: RequestObj, res: ResponseObj, node: LayerNodeType, customData: any, errCb: ErrorCallback, doneCb: Function) => {
   let errorCalled = false
   let nextCalled = false
 

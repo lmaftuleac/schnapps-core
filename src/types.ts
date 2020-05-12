@@ -1,7 +1,11 @@
-import * as express from 'express'
 
-export type RequestObj = Request | express.Request | Object
-export type ResponseObj = Response | express.Response | Object
+export interface LooseObject {
+  [key: string]: any 
+}
+
+export interface RequestObj extends Request, LooseObject {}
+
+export interface ResponseObj extends Response, LooseObject {}
 
 export interface ControllerBackboneClass {
   nodes: LayerNodeType[]
