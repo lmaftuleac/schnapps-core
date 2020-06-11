@@ -16,7 +16,7 @@ const ManagerAccess = controller(AccessController, managerAccess);
 const AdminAccess = controller(AccessController, adminAccess);
 ...
 
-const DoSomethingAsAdmin = controller(adminAccess);
+const DoSomethingAsAdmin = controller(AdminAccess);
 
 DoSomethingAsAdmin
   .do((req, res, next, errCb, data) => {
