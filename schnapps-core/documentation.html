@@ -1,0 +1,655 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+  <meta name="generator" content="Jekyll v4.0.1">
+  <title>Schnapps.js · A healthier architecture to your backend</title>
+
+  <link rel="canonical" href="https://getbootstrap.com/docs/4.5/examples/pricing/">
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <!-- Custom styles for this template -->
+  <link href="pricing.css" rel="stylesheet">
+
+  <!-- Lightweight client-side loader that feature-detects and load polyfills only when necessary -->
+  <script src="https://cdn.jsdelivr.net/npm/@webcomponents/webcomponentsjs@2/webcomponents-loader.min.js"></script>
+
+  <!-- Load the element definition -->
+  <script type="module" src="https://cdn.jsdelivr.net/gh/zerodevx/zero-md@1/src/zero-md.min.js"></script>
+
+  <style>
+    nav.docnav ul.subnav {
+      padding-left:20px
+    }
+    nav.docnav ul.subnav li {
+      list-style-type: none;
+    }
+    nav.docnav a {
+      color:rgba(0,0,0,.65);
+      font-size: 14px;
+    }
+  </style>
+
+</head>
+
+<body>
+  <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 bg-white border-bottom shadow-sm">
+    <nav class="my-2 my-md-0 mr-md-3">
+      <a class="p-2 text-dark" href="/index">Home</a>
+      <a class="p-2 text-dark" href="/guide.html">Guide</a>
+      <a class="p-2 text-dark" href="/documentation.html">API Docs</a>
+    </nav>
+  </div>
+  <div class="container-fluid">
+    <div class="row">
+      <nav class="col-md-3 col-lg-2 d-md-block border-right sidebar collapse docnav">
+        <div class="sticky-top pt-3">
+          <ul class="nav flex-column">
+            <li class="nav-item p-1">
+              <a  href="#controller-constructor">Controller Constructor</a>
+              <ul class="subnav">
+                <li class="nav-item p-1">
+                  <a  href="#set-default-error-handler">setDefaultErrorHandler</a>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-item p-1">
+              <a  href="#controller-instance">Controller Instance</a>
+            </li>
+            <ul class="subnav">
+              <li class="nav-item p-1">
+                <a  href="#before-all">beforeAll</a>
+              </li>
+              <li class="nav-item p-1">
+                <a  href="#do">do</a>
+              </li>
+              <li class="nav-item p-1">
+                <a  href="#end">end</a>
+              </li>
+              <li class="nav-item p-1">
+                <a  href="#catch">catch</a>
+              </li>
+              <li class="nav-item p-1">
+                <a  href="#promise">promise</a>
+              </li>
+              <li class="nav-item p-1">
+                <a  href="#to-middleware">toMiddleware</a>
+              </li>
+              <li class="nav-item p-1">
+                <a  href="#run-pipeline">Run pipeline</a>
+              </li>
+            </ul>
+            <li class="nav-item p-1">
+              <a  href="#handler">Handler</a>
+            </li>
+            <li class="nav-item p-1">
+              <a  href="#error-handler">Error handler</a>
+            </li>
+            <li class="nav-item p-1">
+              <a  href="#end-handler">End handler</a>
+            </li>
+            <li class="nav-item p-1">
+                <a  href="#next">Next callback</a>
+            </li>
+            <li class="nav-item p-1">
+              <a  href="#error">Error callback</a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+      <main class="col-md-9 ml-sm-auto col-lg-10 px-md-4 py-4">
+
+        <div id="controller-constructor" class="p-4">
+          <h2 class="pb-2">Controller Constructor Function</h2>
+          <div class="pb-2 ">
+            <i>Controller Constructor</i> is a constructor wrapper function, it returns a new <a href="#controller-instance">controller instance</a>. 
+          </div>
+
+          <div class="pb-4  ">
+            <zero-md src="snippets/docs/constructor.md"></zero-md>
+          </div>
+          <!-- <hr /> -->
+          <dl class="row ">
+            <dt class="col-sm-2">controller([...params])</dt>
+            <dd class="col-sm-5">
+              <i>...params</i> <code>{function} handler | controllerInstance</code>
+            </dd>
+            <dd class="col-sm-5">
+              Accepts any number of handlers or controller instances.
+              Returns a new Controller Instance 
+            </dd>
+          </dl>
+          <!-- <hr /> -->
+          <div class="pb-2">
+            <div class="pb-2"><strong>Inheritance</strong></div>
+            <div class="pb-4 ">
+              A controller instance can inherit handlers from another controller by passing it as input to the constructor.
+              The constructor accepts an unlimited number of controller intances or handlers functions. The resulting controller
+              will inherit all the handlers from controllers as well as handlers passed as input to the constructor, in the same
+              order as declared in the constructor.
+            </div>
+            <div class="pb-4  ">
+              <strong>Example</strong>
+              <zero-md src="snippets/docs/constructor.inherit-1.md"></zero-md>
+            </div>
+          </div>
+
+          <h5 class="pb-2">Methods</h5>
+          <hr />
+          <dl class="row" id="set-default-error-handler">
+            <dt class="col-sm-4">controller.setDefaultErrorHandler(errorHandler)</dt>
+            <dd class="col-sm-4">
+              <i>errorHandler</i> <code>{function} errorHandler</code>
+            </dd>
+            <dd class="col-sm-4">
+              <a href="#controller-instance">errorHandler function</a>
+            </dd>
+          </dl>
+          <div class="pb-2">
+            Sets a global error handler per whole application.
+          </div>
+          <div class="pb-2 ">
+            <strong>Example</strong>
+            <zero-md src="snippets/docs/constructor.setDefaultErrorHandler.md"></zero-md>
+          </div>
+        </div>
+
+        <hr />
+
+        <div id="controller-instance" class="py-4">
+          <h2 class="pb-2">Controller Instance</h2>
+          <div class="pb-2 ">
+            A <i>Controller Instance</i> is a function with an object-like structure. It is generated by the 
+            <a href="#controller-constructor">controller constructor</a> and its purpose is to combine
+            multiple <a href="#handler">handlers</a> into a pipeline in which the output of each handler serves as the input to its
+            successor handler.
+          </div>
+
+          <div class="pb-2">
+            <div class="pb-2"><strong>Creating a controller instance</strong></div>
+            <div class="pb-4  ">
+              <zero-md src="snippets/docs/controller.md"></zero-md>
+            </div>
+          </div>
+
+          <h5 class="pb-2">Methods</h5>
+          <hr />
+          <div id="before-all" class="py-4">
+            <dl class="row ">
+              <dt class="col-sm-4">controllerInstance.beforeAll(handler)</dt>
+              <dd class="col-sm-4">
+                <i>handler</i> <code>{function} handlerFunction | constrollerInstance</code>
+              </dd>
+              <dd class="col-sm-4">
+                Accepts a <a href="#handler">handler
+                  function</a> or a <a href="">controller instance</a>.
+              </dd>
+            </dl>
+          
+            <div class="pb-2">
+              Inserts a handler function at the beginning of the pipeline, similar to <code>unshift()</code> in array. It can
+              accept another controller instance. In case a controller instance is passed, all its handlers will be
+              added to the current pipeline keeping same order as they where defined in the original controller, at the beginning of the
+              current pipeline.
+            </div>
+            <div class="pb-2 ">
+              <strong>Example</strong>
+              <zero-md src="snippets/docs/controller.beforeAll.md"></zero-md>
+            </div>
+          </div>
+
+          <hr />
+          
+          <div id="do" class="py-4">
+            <dl class="row">
+              <dt class="col-sm-4">controllerInstance.do(handler)</dt>
+              <dd class="col-sm-4">
+                <i>handler</i> <code>{function} handlerFunction | constrollerInstance</code>
+              </dd>
+              <dd class="col-sm-4">
+                
+                Accepts a <a href="#handler">handler
+                  function</a> or a <a href="">controller instance</a>.
+              </dd>
+            </dl>
+            <div class="pb-2">
+              Inserts a handler function at the end of the pipeline, similar to <code>pus()</code> in array. It can
+              accept another controller instance. In case a controller instance is passed, all its handlers will be
+              added to the current pipeline keeping same order as they where defined in the original controller, at the end of the
+              current pipeline.
+            </div>
+            <div class="pb-2">
+              <strong>Example</strong>
+              <zero-md src="snippets/docs/controller.do.md"></zero-md>
+            </div>
+          </div>
+          
+          <hr />
+
+          <div id="end" class="py-4">
+            <dl class="row">
+              <dt class="col-sm-4">controllerInstance.end(endHandler)</dt>
+              <dd class="col-sm-4">
+                <i>endHandler</i> <code>{function} endHandler</code>
+              </dd>
+              <dd class="col-sm-4">
+                <a href="#end-handler">End Handler function</a>
+              </dd>
+            </dl>
+            <div class="pb-2">
+              Inserts a <a href="#end-handler">endHandler</a>. It's defined once per controller, and gets called after all
+              the handlers in the pipeline have passed successfilly
+            </div>
+            <div class="pb-2 ">
+              <strong>Example</strong>
+              <zero-md src="snippets/docs/controller.end.md"></zero-md>
+            </div>
+          </div>
+          
+          <hr />
+
+          <div id="catch" class="py-4">
+            
+            <dl class="row">
+              <dt class="col-sm-4">controllerInstance.catch(errorHandler)</dt>
+              <dd class="col-sm-4">
+                <i>errorHandler</i> <code>{function} errorHandler</code>
+              </dd>
+              <dd class="col-sm-4">
+                <a href="#error-handler">Error Handler function</a>
+              </dd>
+            </dl>
+
+            <div class="pb-2">Inserts a <a href="#error-handler">errorHandler</a>. 
+              It's used to chatch errors in the pipeline. If a controller is missing an errorHandler, errors will end up in
+              the <a href="#controller-constructor">globalErrorHandler</a>
+            </div>
+            <div class="pb-2 ">
+              <strong>Example</strong>
+              <zero-md src="snippets/docs/controller.catch.md"></zero-md>
+            </div>  
+          </div>
+
+          <hr />
+
+          <div id="promise" class="py-4">
+            <dl class="row">
+              <dt class="col-sm-4">
+                controllerInstance.promise(req, res, [data])<br>
+              </dt>
+              <dd class="col-sm-4">
+                <i>request</i> <code>{object} Request Object</code>
+              </dd>
+              <dd class="col-sm-4">
+                Request object, depending on the framework used.
+              </dd>
+              <dt class="col-sm-4"></dt>
+              <dd class="col-sm-4">
+                <i>response</i> <code>{object} Response Object</code>
+              </dd>
+              <dd class="col-sm-4">
+                Response object, depending on the framework used.
+              </dd>
+              <dt class="col-sm-4"></dt>
+              <dd class="col-sm-4">
+                <i>data</i> <code>{any}</code> optional
+              </dd>
+              <dd class="col-sm-4">
+                Any data served as input to the first handler in the pipeline
+              </dd>
+            </dl>
+            <div class="pb-4 "><strong>returns:</strong> <code>Promise</code> </div>
+            <div class="pb-2">Transforms the pipeline into a promise. Invoking this method will ignore <code>.end()</code> and
+              <code>.catch()</code> the resulting value of the promise will be the value passed in <code>next(...)</code> by the last
+              handler in the pipeline
+            </div>
+            <div class="pb-4 "></div>
+            <div class="pb-2">
+              Note that each framework handles the request-response cycle differently. Express.js uses
+              <code>request/response</code> objects while Hapi.js uses <code>request/h</code>. Either way
+              our controller instance is just passing those parameters to handler functions without interacting.
+            </div>
+            <div class="pb-2 ">
+              <strong>Example</strong>
+              <zero-md src="snippets/docs/controller.promise.md"></zero-md>
+            </div>
+          </div>
+
+          <hr />
+
+          <div id="to-middleware" class="py-4">
+            <dl class="row">
+              <dt class="col-sm-4">
+                controllerInstance.toMiddleware(req, res, data)<br>
+              </dt>
+              <dd class="col-sm-4">
+                <i>request</i> <code>{object} Request Object</code>
+              </dd>
+              <dd class="col-sm-4">
+                Request object, depending on the framework used.
+              </dd>
+              <dt class="col-sm-4"></dt>
+              <dd class="col-sm-4">
+                <i>response</i> <code>{object} Response Object</code>
+              </dd>
+              <dd class="col-sm-4">
+                Response object, depending on the framework used.
+              </dd>
+              <dt class="col-sm-4"></dt>
+              <dd class="col-sm-4">
+                <i>data</i> <code>{any}</code> optional
+              </dd>
+              <dd class="col-sm-4">
+                Any data served as input to the first handler in the pipeline
+              </dd>
+            </dl>
+            <div class="pb-4 "><strong>returns:</strong> <code>ExpressMiddleware</code> </div>
+            <div class="pb-2">Transforms the pipeline into Express.js middleware. Invoking this method will ignore <code>.end()</code> and
+              <code>.catch()</code>. Note that Express does not use <code>next()</code> to pass data, therefore any data passed by the
+              last handler through <code>next(...)</code> will be ignored.
+            </div>
+            <div class="pb-2 ">
+              <strong>Example</strong>
+              <zero-md src="snippets/docs/controller.middleware.md"></zero-md>
+            </div>
+          </div>
+          
+          <hr />
+
+          <h5 id="run-pipeline" class="pt-4 pb-2">Running the pipeline</h5>
+          
+          <div class="py-4">
+            <dl class="row">
+              <dt class="col-sm-4">
+                controllerInstance(req, res, data)
+              </dt>
+              <dd class="col-sm-4">
+                <i>request</i> <code>{object} Request Object</code>
+              </dd>
+              <dd class="col-sm-4">
+                Request object, depending on the framework used.
+              </dd>
+              <dt class="col-sm-4"></dt>
+              <dd class="col-sm-4">
+                <i>response</i> <code>{object} Response Object</code>
+              </dd>
+              <dd class="col-sm-4">
+                Response object, depending on the framework used.
+              </dd>
+              <dt class="col-sm-4"></dt>
+              <dd class="col-sm-4">
+                <i>data</i> <code>{any}</code> optional
+              </dd>
+              <dd class="col-sm-4">
+                Any data served as input to the first handler in the pipeline
+              </dd>
+            </dl>
+            <div class="pb-2">
+              Note that each framework handles the request-response cycle differently. Express.js uses
+              <code>request/response</code> objects while Hapi.js uses <code>request/h</code>. Either way
+              our controller instance is just passing those parameters to handler functions without interacting.
+            </div>
+            <div class="pb-2 ">
+              <strong>Example</strong>
+              <zero-md src="snippets/docs/controller.run.md"></zero-md>
+            </div>
+          </div>
+        </div>
+
+        <hr />
+
+        <div id="handler" class="py-4">
+          <h2 class="pb-2">Handler Function</h2>
+          <div class="pb-2 ">
+            A handler is a function responsible for a specific task in a chain of consecutive handlers, where the output of each
+            handler serves as input to the succeding handler. A handler function can: 
+            <ol>
+              <li>Return a response</li>
+              <li>Throw an error</li>
+              <li>Pass controll and data to the next handler down the pipeline</li>
+            </ol>
+            Similar to Express's middleware, it uses <code>next()</code> to pass controll to the next handler,
+            but with an essential difference: instead of passing an error, we use <code>next()</code> to pass data to the
+            next handler, while having a separate callback for errors.
+          </div>
+          <div class="pb-2 ">
+            <strong>Params</strong>
+          </div>
+          <dl class="row">
+            <dd class="col-sm-3">
+              <i>request</i> <code>{object} Request Object</code>
+            </dd>
+            <dd class="col-sm-9">
+              Request object, depending on the framework used.
+            </dd>
+            <dd class="col-sm-3">
+              <i>response</i> <code>{object} Response Object</code>
+            </dd>
+            <dd class="col-sm-9">
+              Response object, depending on the framework used.
+            </dd>
+            <dd class="col-sm-3">
+              <i>next</i> <code>{function} nextCallback</code>
+            </dd>
+            <dd class="col-sm-9">
+              Next Callback
+            </dd>
+            <dd class="col-sm-3">
+              <i>errorCb</i> <code>{function} errorCallback</code>
+            </dd>
+            <dd class="col-sm-9">
+              Error Callback
+            </dd>
+            <dd class="col-sm-3">
+              <i>data</i> <code>{any}</code>
+            </dd>
+            <dd class="col-sm-9">
+              Any input data
+            </dd>
+          </dl>
+          <div class="pb-2 ">
+            <strong>Example</strong>
+            <zero-md src="snippets/docs/handler.md"></zero-md>
+          </div>
+        </div>
+
+        <hr />
+
+        <div id="error-handler" class="py-4">
+          <h2 class="pb-2">Error Handler Function</h2>
+          <div class="pb-2 ">
+            Is a function responsible for catching and handling errors passed by an <a href="#error-callback">error callback</a>.
+          </div>
+          <div class="pb-2 ">
+            <strong>Params</strong>
+          </div>
+          <dl class="row">
+            <dd class="col-sm-3">
+              <i>request</i> <code>{object} Request Object</code>
+            </dd>
+            <dd class="col-sm-9">
+              Request object, depending on the framework used.
+            </dd>
+            <dd class="col-sm-3">
+              <i>response</i> <code>{object} Response Object</code>
+            </dd>
+            <dd class="col-sm-9">
+              Response object, depending on the framework used.
+            </dd>
+            <dd class="col-sm-3">
+              <i>Error</i> <code>{any}</code>
+            </dd>
+            <dd class="col-sm-9">
+              Any data which represents the error
+            </dd>
+          </dl>
+          <div class="pb-2 ">
+            <strong>Example</strong>
+            <zero-md src="snippets/docs/error-handler.md"></zero-md>
+          </div>
+        </div>
+
+        <hr />
+
+        <div id="end-handler" class="py-4">
+          <h2 class="pb-2">End Handler Function</h2>
+          <div class="pb-2 ">
+            Is a function that get's call at the end of a pipeline. Its purpose is to prepare and submit a response.
+            Since it's the last handler in the call-chain, it lacks a <code>next()</code> callback.
+          </div>
+          <div class="pb-2 ">
+            <strong>Params</strong>
+          </div>
+          <dl class="row">
+            <dd class="col-sm-3">
+              <i>request</i> <code>{object} Request Object</code>
+            </dd>
+            <dd class="col-sm-9">
+              Request object, depending on the framework used.
+            </dd>
+            <dd class="col-sm-3">
+              <i>response</i> <code>{object} Response Object</code>
+            </dd>
+            <dd class="col-sm-9">
+              Response object, depending on the framework used.
+            </dd>
+            <dd class="col-sm-3">
+              <i>errorCb</i> <code>{function} errorCallback</code>
+            </dd>
+            <dd class="col-sm-9">
+              Error Callback
+            </dd>
+            <dd class="col-sm-3">
+              <i>data</i> <code>{any}</code>
+            </dd>
+            <dd class="col-sm-9">
+              Any data passed by the last handler in the pipeline
+            </dd>
+          </dl>
+
+          <div class="pb-2 ">
+            <strong>Example</strong>
+            <zero-md src="snippets/docs/end-handler.md"></zero-md>
+          </div>
+        </div>
+
+        <hr />
+
+        <div id="next" class="py-4">
+          <h2 class="pb-2">Next Callback</h2>
+          <div class="pb-2 ">
+            A callback function passed into each handler. Its used for passing data to next handler, invoke another controller
+            instance, or re-route the flow to another controler instance.
+          </div>
+          <dl class="row py-2 ">
+            <dt class="col-sm-3">next(data)</dt>
+            <dd class="col-sm-9">
+              <p>
+                <i>data</i> <code>{any}</code>  Data that will be passed to the next handler
+              </p>
+            </dd>
+          </dl>
+          <hr />
+          <dl class="row pb-2 ">
+            <dt class="col-sm-3">next(controller, [data], [routingOptions])</dt>
+            <dd class="col-sm-9">
+              <p>
+                <i>controller</i> <code>{function} controllerInstance</code> Another controller instance
+              </p>
+              <p>
+                <i>data</i> <code>{any}</code> - Data that will be passed to the next handler. Optional
+              </p>
+              <p>
+                <i>routingOptions</i> <code>{object} routingOptions</code> - routingOptions object. Optional
+              </p>
+            </dd>
+          </dl>
+          <hr />
+          <dl class="row pb-2 ">
+            <dt class="col-sm-3">routingOptions</dt>
+            <dd class="col-sm-9">
+              <i>reroute</i> <code>{boolean}</code>  - Indicates how the redirect should be handled. 
+              Setting it to <code>false</code> will run the handlers declared in the provided controller as a part of the current pipeline. 
+              This means that all the errors will be handled by our current error handler and if we have additional handlers below,
+              the flow will resume after all the handlers from provided controller will be passed. On the other hand, setting this parameter to 
+              <code>true</code> will completely re-route the flow to the provided controller, ignoring everithing that is declared
+              below in the current pipeline. Defaults to <code>false</code>
+            </dd>
+          </dl>
+
+          <div class="pb-2 ">
+            <strong>Example</strong>
+            <zero-md src="snippets/docs/next.md"></zero-md>
+          </div>
+        </div>
+
+        <hr />
+
+        <div id="error" class="py-4">
+          <h2 class="pb-2">Error Callback</h2>
+          <div class="pb-2 ">
+            A callback function used for reporting errors. The reported error will end up in the controller's error handler if such
+            is declared. Otherwise it will end un in the global erorr handler.
+          </div>
+          <dl class="row py-2">
+            <dt class="col-sm-2">errorCb(error)</dt>
+            <dd class="col-sm-10">
+              <p>
+                <i>error</i> <code>[any]</code> Any data structure that represents an error
+              </p>
+            </dd>
+          </dl>
+          <div class="pb-2 ">
+            <strong>Example</strong>
+            <zero-md src="snippets/docs/error-cb.md"></zero-md>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+    <footer class="pt-4 my-md-5 pt-md-5 border-top">
+      <!-- <div class="row">
+      <div class="col-12 col-md">
+        <small class="d-block mb-3 text-muted">&copy; 2017-2020</small>
+      </div>
+      <div class="col-6 col-md">
+        <h5>Features</h5>
+        <ul class="list-unstyled text-small">
+          <li><a class="text-muted" href="#">Cool stuff</a></li>
+          <li><a class="text-muted" href="#">Random feature</a></li>
+          <li><a class="text-muted" href="#">Team feature</a></li>
+          <li><a class="text-muted" href="#">Stuff for developers</a></li>
+          <li><a class="text-muted" href="#">Another one</a></li>
+          <li><a class="text-muted" href="#">Last time</a></li>
+        </ul>
+      </div>
+      <div class="col-6 col-md">
+        <h5>Resources</h5>
+        <ul class="list-unstyled text-small">
+          <li><a class="text-muted" href="#">Resource</a></li>
+          <li><a class="text-muted" href="#">Resource name</a></li>
+          <li><a class="text-muted" href="#">Another resource</a></li>
+          <li><a class="text-muted" href="#">Final resource</a></li>
+        </ul>
+      </div>
+      <div class="col-6 col-md">
+        <h5>About</h5>
+        <ul class="list-unstyled text-small">
+          <li><a class="text-muted" href="#">Team</a></li>
+          <li><a class="text-muted" href="#">Locations</a></li>
+          <li><a class="text-muted" href="#">Privacy</a></li>
+          <li><a class="text-muted" href="#">Terms</a></li>
+        </ul>
+      </div>
+    </div> -->
+    </footer>
+</body>
+
+</html>
