@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 const { expect } = require('chai')
-const { controller } = require('../dist')
+const { controller, session, shared } = require('../dist')
 const { ControllerBackbone } = require('../dist/controller-backbone')
 const { LayerNode } = require('../dist/layer-node')
 
@@ -666,12 +666,73 @@ describe('Test Controller creation', function () {
     expect(data[3]).to.equal('end')
   })
   
-  it('should throw error if constructor input is not a valid handler', async () => {
+  it('should throw error if constructor input is not a valid handler', () => {
     try {
       const ctrl = controller('bad input')
     } catch( error ) {
-      expect(error.message).to.equal('Unknown type of handler provided')
+      expect(error.message).to.equal('Bad input type provided')
     }
+  })
+
+  it('should handle error in catch when an exception is thrown', () => {
+    const ctrl = controller();
+    controller.setDefaultErrorHandler((req, res, error) => {
+      expect(error.message).to.equal("Cannot set property 'b' of undefined");
+    })
+
+    ctrl.do((req, res, errCb, data) => {
+      const a = undefined;
+      a.b = 1;
+    })
+    
+    const ctrl2 = controller(ctrl);
+
+    ctrl2.catch((req, res, error) => {
+      expect(error.message).to.equal("Cannot set property 'b' of undefined");
+    })
+
+    const ctrl3 = controller(ctrl);
+
+    const reqMock = {}
+    const resMock = {}
+    const data = []
+
+    ctrl2(reqMock, resMock, data);
+    ctrl3(reqMock, resMock, data);
+  })
+
+  it('should use Session store', () => {
+    const ctrl = controller(session);
+    const reqMock = {}
+    const resMock = {}
+
+    ctrl
+      .do((req, res, next, errCb) => {
+        req.setSession({userId: 1});
+        return next();
+      })
+      .do((req, res, next, errCb) => {
+        const { userId } = req.session;
+        expect(userId).to.equal(1)
+      })
+      ctrl(reqMock, resMock);
+  })
+
+  it('should use Shared store', () => {
+    const ctrl = controller(shared);
+    const reqMock = {}
+    const resMock = {}
+
+    ctrl
+      .do((req, res, next, errCb) => {
+        req.setShared({userId: 1});
+        return next();
+      })
+      .do((req, res, next, errCb) => {
+        const { userId } = req.shared;
+        expect(userId).to.equal(1)
+      })
+      ctrl(reqMock, resMock);
   })
 
 })

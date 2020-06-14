@@ -121,7 +121,7 @@ export class ControllerBackbone implements ControllerBackboneClass {
       }
       this.prependNodes(childNodes)
     } else {
-      throw new Error('Unknown type of handler provided')
+      throw new Error('Bad input type provided')
     }
     return this.controller
   }
@@ -141,7 +141,7 @@ export class ControllerBackbone implements ControllerBackboneClass {
       }
       this.appendNodes(childNodes)
     } else {
-      throw new Error('Unknown type of handler provided')
+      throw new Error('Bad input type provided')
     }
     return this.controller
   }
@@ -195,8 +195,7 @@ export class ControllerBackbone implements ControllerBackboneClass {
   }
 
   static __errorHandler (req: RequestObj, res: ResponseObj, error: any) {
-    // @ts-ignore
-    res.send('SERVER ERROR')
+    throw new Error(error);
   }
 
   static setDefaultErrorHandler (customErrorHandler: CatchErrorCallback) {
@@ -285,6 +284,9 @@ const callNode = (req: RequestObj, res: ResponseObj, node: LayerNodeType, custom
 
     return errCb(err)
   }
-
-  return node.handler(req, res, next, error, customData)
+  try {
+    return node.handler(req, res, next, error, customData)
+  } catch(err) {
+    return errCb(err)
+  }
 }

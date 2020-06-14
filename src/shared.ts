@@ -5,11 +5,16 @@ const sharedHandler: HandlerFunction = (req: RequestObj, res: ResponseObj, next,
   if (req.shared) {
     return next(data)
   }
-
-  req.shared = {}
-  req.setShared = (sharedData: { [key: string]: any }) => {
+  const setShared = (sharedData: { [key: string]: any }) => {
     req.shared = { ...req.shared, ...sharedData }
   }
+  const sharedStore = {
+    shared: {},
+    setShared
+  }
+
+  Object.assign(req, sharedStore)
+  
   return next(data)
 }
 

@@ -87,13 +87,13 @@
               A <strong>handler</strong> is a function, similar to Express's middleware, it accepts four parameters : 
               <code>request</code>, <code>response</code>, <code>next</code>, <code>errorCallback</code>, <code>data</code>. The
               fourth parameter is the input data passed by the previous handler.
-              The main difference however, is that Schnapp's handlers use <code>next()</code> to pass data and to the next handler, 
+              The main difference however is that Schnapp's handlers use <code>next()</code> to pass data the next handler, 
               and <code>errorCallback()</code> for throwing errors. While Express uses <code>next()</code> to pass controll, 
               or to throw an error if any input data is provided (i.e. <code>next(error)</code>). 
-              This is a major difference, and should not be confused when working with Schnapps.<br>
+              This is a major difference, and should not be confused when working with Schnapps.
             </div>
             <div class="pb-2">
-              <code>Request</code> and <code>Response</code> objects are passed initially by the framework. Schnapps does not interact
+              <code>Request</code> and <code>Response</code> objects depend on the framework used. Schnapps does not interact
               whith those objects, it passes them as input to its handlers. Therefore if Schnapps is connected to Hapi, 
               each hanlder will receive <code>request</code> and <code>h</code> as first and second parameter respectively.
             </div>
@@ -175,12 +175,12 @@
               provided a referrer id or not. The second condition will be based on the role of the referrer : simple
               users receive bonus ponints, parteners receive commissions, as in the diagram below:
             </div>
-            <div class="p-4">
-              <img src="./assets/branching.png" class="img-fluid" alt="Responsive image">
+            <div class="p-4 text-center">
+              <img src="./assets/branching.png" class="img-fluid" alt="Responsive image" style="max-width: 900px;">
             </div>
             <div class="pb-2">
               We can use <code>next()</code> to pass another controller object like so:
-              <code>next(controller, {someInptData});</code>.
+              <code>next(controller, { someInptData });</code>.
               Let's replicate the same flow using Schnapps. We'll start by defining each block as a separate controller.
             </div>
             <div class="pb-2">
