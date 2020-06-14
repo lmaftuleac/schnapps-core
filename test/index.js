@@ -666,12 +666,39 @@ describe('Test Controller creation', function () {
     expect(data[3]).to.equal('end')
   })
   
-  it('should throw error if constructor input is not a valid handler', async () => {
+  it('should throw error if constructor input is not a valid handler', () => {
     try {
       const ctrl = controller('bad input')
     } catch( error ) {
-      expect(error.message).to.equal('Unknown type of handler provided')
+      expect(error.message).to.equal('Bad input type provided')
     }
+  })
+
+  it('should handle error in catch when an exception is thrown', () => {
+    const ctrl = controller();
+    controller.setDefaultErrorHandler((req, res, error) => {
+      expect(error.message).to.equal("Cannot set property 'b' of undefined");
+    })
+
+    ctrl.do((req, res, errCb, data) => {
+      const a = undefined;
+      a.b = 1;
+    })
+    
+    const ctrl2 = controller(ctrl);
+
+    ctrl2.catch((req, res, error) => {
+      expect(error.message).to.equal("Cannot set property 'b' of undefined");
+    })
+
+    const ctrl3 = controller(ctrl);
+
+    const reqMock = {}
+    const resMock = {}
+    const data = []
+
+    ctrl2(reqMock, resMock, data);
+    ctrl3(reqMock, resMock, data);
   })
 
 })
