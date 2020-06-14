@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 const { expect } = require('chai')
-const { controller } = require('../dist')
+const { controller, session, shared } = require('../dist')
 const { ControllerBackbone } = require('../dist/controller-backbone')
 const { LayerNode } = require('../dist/layer-node')
 
@@ -699,6 +699,40 @@ describe('Test Controller creation', function () {
 
     ctrl2(reqMock, resMock, data);
     ctrl3(reqMock, resMock, data);
+  })
+
+  it('should use Session store', () => {
+    const ctrl = controller(session);
+    const reqMock = {}
+    const resMock = {}
+
+    ctrl
+      .do((req, res, next, errCb) => {
+        req.setSession({userId: 1});
+        return next();
+      })
+      .do((req, res, next, errCb) => {
+        const { userId } = req.session;
+        expect(userId).to.equal(1)
+      })
+      ctrl(reqMock, resMock);
+  })
+
+  it('should use Shared store', () => {
+    const ctrl = controller(shared);
+    const reqMock = {}
+    const resMock = {}
+
+    ctrl
+      .do((req, res, next, errCb) => {
+        req.setShared({userId: 1});
+        return next();
+      })
+      .do((req, res, next, errCb) => {
+        const { userId } = req.shared;
+        expect(userId).to.equal(1)
+      })
+      ctrl(reqMock, resMock);
   })
 
 })

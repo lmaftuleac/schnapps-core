@@ -6,10 +6,17 @@ const sessiondHandler: HandlerFunction = (req: RequestObj, res: ResponseObj, nex
     return next(data)
   }
 
-  req.session = {}
-  req.setSession = (sessionData: { [key: string]: any }) => {
+  const setSession = (sessionData: { [key: string]: any }) => {
     req.session = { ...req.session, ...sessionData }
   }
+
+  const sessionStore = {
+    session: {},
+    setSession
+  }
+
+  Object.assign(req, sessionStore)
+
   return next(data)
 }
 
