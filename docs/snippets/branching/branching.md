@@ -51,7 +51,7 @@ RegisterUser
     }
 
     // check role
-    const role = await db.selet('*').from('users').where('refCode', referrerCode);
+    const role = await db.selet('role').from('users').where('refCode', referrerCode);
 
     /** 
      * next() can be used to redirect the flow to another controller.
