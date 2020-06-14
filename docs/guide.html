@@ -4,18 +4,15 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="">
-  <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
-  <meta name="generator" content="Jekyll v4.0.1">
-  <title>Schnapps.js · A better architecture to your backend.</title>
-
-  <link rel="canonical" href="https://getbootstrap.com/docs/4.5/examples/pricing/">
+  <meta name="description" content="Schnapps is a library that brings a cleaner approach to controller/service structure in APIs">
+  <meta name="author" content="Liviu Maftuleac">
+  <title>Have you tried Schnapps? It's great!</title>
 
   <!-- Bootstrap core CSS -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
     integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   <!-- Custom styles for this template -->
-  <link href="pricing.css" rel="stylesheet">
+  <link href="styles.css" rel="stylesheet">
 
   <!-- Lightweight client-side loader that feature-detects and load polyfills only when necessary -->
   <script src="https://cdn.jsdelivr.net/npm/@webcomponents/webcomponentsjs@2/webcomponents-loader.min.js"></script>
@@ -23,188 +20,240 @@
   <!-- Load the element definition -->
   <script type="module" src="https://cdn.jsdelivr.net/gh/zerodevx/zero-md@1/src/zero-md.min.js"></script>
 
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+
 </head>
 
 <body>
-  <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 bg-white border-bottom shadow-sm">
+  <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 border-bottom shadow-sm topnav">
     <nav class="my-2 my-md-0 mr-md-3">
-      <a class="p-2 text-dark" href="index.html">Home</a>
-      <a class="p-2 text-dark" href="guide.html">Guide</a>
-      <a class="p-2 text-dark" href="documentation.html">API Docs</a>
-      <a class="p-2 text-dark" href="https://github.com/lmaftuleac/schnapps-core">Github</a>
+      <a class="p-2 text-white" href="index.html">Home</a>
+      <a class="p-2 text-white" href="guide.html">Guide</a>
+      <a class="p-2 text-white" href="documentation.html">API Docs</a>
+      <a class="p-2 text-white" href="https://github.com/lmaftuleac/schnapps-core">Github</a>
     </nav>
   </div>
 
-  <div class="container">
-    <h4 class="display-5 py-5">How it works</h4>
-    <div class="pb-4">
-      <div class="pb-2">
-        Schnapps is a library that allows to connect services in a chain-like structure. The chain bundle can be
-        reused or extended.
-        It can be used with Express, Hapi, or with any other framework that's based on request-response cycle.
-      </div>
-      <div class="pb-2">
-        <zero-md src="snippets/basics/first-example.md"></zero-md>
-      </div>
-      <div class="pb-2">
-        Let's assume we want to build a JWT authentication mechanism for our API, having three access roles:
-        <code>USER</code>,
-        <code>MANAGER</code>, <code>ADMIN</code>. We'll start by breaking down our authentication flow into steps, for
-        each step we'll write a handler
-        function. Think of a handler function as service method, where each method is responsible for a specific task:
-        <ol class="py-2">
-          <li>First we need to parse our request object and substract our Bearer Token</li>
-          <li>Then we'll try to decode the token and substract <code>userId</code> and <code>role</code></li>
-          <li>And last, we need to check wether the user is allowed to access the route, by checking its <code>role</code></li>
-        </ol>
-
-        For each step we'll create a handler - keeping in mind that the output of each handler serves as input to the
-        next handler.
-      </div>
-      <div class="pb-2">
-        <zero-md src="snippets/basics/create-handlers.md"></zero-md>
-      </div>
-      <div class="pb-2">
-        Now let's connect them all together
-      </div>
-      <div class="pb-2">
-        <zero-md src="snippets/basics/create-controller.md"></zero-md>
-      </div>
-      <div class="pb-2">
-        In this example we have connected all handlers into a single controller. But it's not always in handy to write
-        all
-        those
-        handlers for every route a user can access. Let's split our controller into reusable parts so whenever we need a
-        secured route we could simply "extend"
-        our authentication controller.
-      </div>
-      <div class="pb-2">
-        <zero-md src="snippets/basics/split-controller.md"></zero-md>
-      </div>
-      <div class="pb-2">
-        Note that a constructor function accepts anoter controller or handler function as input parameters. In fact, it
-        accepts
-        any number of controllers and handlers. The resutling controller will inherit all handlers in the same order as
-        they
-        where declared in the constructor function.
-      </div>
-      <div class="pb-2">
-        Now let's extend our authentication flow, so we can re-use it in our app
-      </div>
-      <div class="pb-2">
-        <zero-md src="snippets/basics/split-auth-controller.md"></zero-md>
-      </div>
-      <div class="pb-2">
-        And for the final part, let's connect our controllers to the framework
-      </div>
-      <div class="pb-2">
-        <zero-md src="snippets/basics/add-to-framework.md"></zero-md>
-      </div>
+  <div class="container-fluid">
+    <div class="row">
+      <nav class="col-md-3 col-lg-2 d-md-block border-right sidebar collapse docnav">
+        <div class="sticky-top pt-3">
+          <ul class="nav flex-column">
+            <li class="nav-item p-1">
+              <a class="nav-link" href="#how-it-works">How it works</a>
+            </li>
+            <li class="nav-item p-1">
+              <a class="nav-link" href="#example">Example</a>
+            </li>
+            <li class="nav-item p-1">
+              <a class="nav-link" href="#non-linear-flows">Non-linear flows</a>
+            </li>
+            <li class="nav-item p-1">
+              <a class="nav-link" href="#using-stores">Using stores</a>
+            </li>
+            <li class="nav-item p-1">
+              <a class="nav-link" href="#global-error-handler">Global error handler</a>
+            </li>
+            <li class="nav-item p-1">
+              <a class="nav-link" href="#more-cool-stuff">More cool stuff</a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+      <main class="col-md-9 ml-sm-auto col-lg-10 px-md-4 py-4">
+          <h4 class="display-5 py-5" id="how-it-works">How it works</h4>
+          <div class="pb-4">
+            <div class="pb-2">
+              Schnapps is a library that allows to connect service methods - named handlers, in a chain-like structure.
+              The bundle acts as a pipeline, where each handler's output serves as input to the next handler. The bundle can be reused or extended.
+              It can be used with <a href="https://expressjs.com/">Express</a>, <a href="https://hapi.dev/">Hapi</a>, or with any
+              other framework that's based on request-response cycle.
+            </div>
+            <div class="pb-2">
+              <zero-md src="snippets/basics/first-example.md"></zero-md>
+            </div>
+            <div class="pb-2">
+              A <strong>handler</strong> is a function, similar to Express's middleware, it accepts four parameters : 
+              <code>request</code>, <code>response</code>, <code>next</code>, <code>errorCallback</code>, <code>data</code>. The
+              fourth parameter is the input data passed by the previous handler.
+              The main difference however, is that Schnapp's handlers use <code>next()</code> to pass data and to the next handler, 
+              and <code>errorCallback()</code> for throwing errors. While Express uses <code>next()</code> to pass controll, 
+              or to throw an error if any input data is provided (i.e. <code>next(error)</code>). 
+              This is a major difference, and should not be confused when working with Schnapps.<br>
+            </div>
+            <div class="pb-2">
+              <code>Request</code> and <code>Response</code> objects are passed initially by the framework. Schnapps does not interact
+              whith those objects, it passes them as input to its handlers. Therefore if Schnapps is connected to Hapi, 
+              each hanlder will receive <code>request</code> and <code>h</code> as first and second parameter respectively.
+            </div>
+            <h4 class="display-5 py-5" id="example">Example</h4>
+            <div class="pb-2">
+              Let's assume we want to build a JWT authentication mechanism for our API, having three access roles:
+              <code>USER</code>,
+              <code>MANAGER</code>, <code>ADMIN</code>. We'll start by breaking down our authentication flow into steps, for
+              each step we'll write a handler
+              function. Think of a handler function as service method, where each method is responsible for a specific task:
+              <ol class="py-2">
+                <li>First we need to parse our request object and substract our Bearer Token</li>
+                <li>Then we'll try to decode the token and substract <code>userId</code> and <code>role</code></li>
+                <li>And last, we need to check wether the user is allowed to access the route, by checking its <code>role</code></li>
+              </ol>
+      
+              For each step we'll create a handler - keeping in mind that the output of each handler serves as input to the
+              next handler.
+            </div>
+            <div class="pb-2">
+              <zero-md src="snippets/basics/create-handlers.md"></zero-md>
+            </div>
+            <div class="pb-2">
+              Now let's connect them all together
+            </div>
+            <div class="pb-2">
+              <zero-md src="snippets/basics/create-controller.md"></zero-md>
+            </div>
+            <div class="pb-2">
+              In this example we have connected all handlers into a single controller. But it's not always in handy to write
+              all
+              those
+              handlers for every route a user can access. Let's split our controller into reusable parts so whenever we need a
+              secured route we could simply "extend"
+              our authentication controller.
+            </div>
+            <div class="pb-2">
+              <zero-md src="snippets/basics/split-controller.md"></zero-md>
+            </div>
+            <div class="pb-2">
+              Note that a constructor function accepts anoter controller or handler function as input. In fact, it
+              accepts
+              any number of controllers and handlers. The resutling controller will inherit all handlers in the same order as
+              they
+              where declared in the constructor function.
+            </div>
+            <div class="pb-2">
+              Now let's extend our authentication flow, so we can re-use it in our app
+            </div>
+            <div class="pb-2">
+              <zero-md src="snippets/basics/split-auth-controller.md"></zero-md>
+            </div>
+            <div class="pb-2">
+              And for the final part, let's connect our controllers to the framework
+            </div>
+            <div class="pb-2">
+              <zero-md src="snippets/basics/add-to-framework.md"></zero-md>
+            </div>
+          </div>
+      
+          <h4 class="display-5 pb-4" id="non-linear-flows">Non-linear flows</h4>
+          <div class="pb-4">
+            <!-- <div class="pb-2">
+              There are many cases where the flow is conditioned by the input data. Let's say we are building a community platform,
+              where each user can refer new users and receive bonus points. Besides users, we have affiliate parteners who can
+              also refer users and receive a commission. Therefore, in our flow we'll have two conditions : 
+              <ol>
+                <li>if the registering user is using a referrerId. </li>
+                <li>if the user did provide a referrerId - the condition will be based on the role of the referrer : simple 
+              users receive bonus ponints, parteners receive commissions.</li>
+              </ol>
+            </div> -->
+            <div class="pb-2">
+              There are many cases where the flow is conditioned by the input data. Let's say we are building a community
+              platform,
+              where each user can refer new users and receive bonus points. Besides users, we have affiliate parteners who can
+              also refer users and receive a commission. Therefore, our data flow is conditioned wether the registering user
+              has
+              provided a referrer id or not. The second condition will be based on the role of the referrer : simple
+              users receive bonus ponints, parteners receive commissions, as in the diagram below:
+            </div>
+            <div class="p-4">
+              <img src="./assets/branching.png" class="img-fluid" alt="Responsive image">
+            </div>
+            <div class="pb-2">
+              We can use <code>next()</code> to pass another controller object like so:
+              <code>next(controller, {someInptData});</code>.
+              Let's replicate the same flow using Schnapps. We'll start by defining each block as a separate controller.
+            </div>
+            <div class="pb-2">
+              <zero-md src="snippets/branching/branching.md"></zero-md>
+            </div>
+          </div>
+      
+          <h4 class="display-5 pb-4" id="using-stores">Using Stores</h4>
+          <div class="pb-4">
+      
+            <div class="pb-2">
+              Stores are temporary data holders. Think of a store as temporary data attachet to the request object - like a
+              session. As
+              long as the request-responce cycle is in progress you can access the stored data. Once the cycle is over, the
+              data is disposed
+              along with the request object.
+            </div>
+            <div class="pb-2"><strong>Session Store</strong> - extends request object with a <code>session</code> object and a
+              <code>setSession()</code> method </div>
+            <div class="pb-2">
+              <zero-md src="snippets/stores/ex1.md"></zero-md>
+            </div>
+      
+            <div class="pb-2"><strong>Shared Store</strong> - Similar to session store it extends request object with a
+              <code>shared</code> object and a <code>setShared()</code> method.
+              Altho it has the same structure as the session store, its purpose is to store, share and aggregate data between
+              handlers. For example we need to create a route in which we return detailed information about a user, alog with
+              its current balance. Assuming that we already have a service that given a <code>userId</code> will return user's details,
+              and a similar service which returns user's balance. Let's create a controller that re-uses those services
+            </div>
+            <div class="pb-2">
+              <zero-md src="snippets/stores/ex2.md"></zero-md>
+            </div>
+          </div>
+      
+          <h4 class="display-5 pb-4" id="global-error-handler">Global error handler</h4>
+          <div class="pb-4">
+            <div class="pb-2">
+              As mentioned in the first example - <code>end()</code> and <code>catch()</code> are optional for any controller
+              and this is true - since we have access to response object in any handler (altho for a cleaner code we do
+              recomend using
+              <code>.end()</code> for handling responses). What if we don't want to handle errors on each controller ? The
+              solution is
+              really simple with Schnapps - we just need to define a global error handler. This way, controllers which do not
+              have an
+              explicit error handler defined will fallback to global error handler.
+            </div>
+            <div class="pb-2">
+              <zero-md src="snippets/error/global-error-handler.md"></zero-md>
+            </div>
+          </div>
+      
+          <h4 class="display-5 pb-4" id="more-cool-stuff">More cool stuff</h4>
+          <div class="pb-4">
+            <div class="pb-2">
+              Use controller as a promise.
+              and
+              <code>.catch()</code>
+            </div>
+            <div class="pb-2">
+              <zero-md src="snippets/cool-stuff/promise.md"></zero-md>
+            </div>
+            <div class="pb-2">
+              Or convert it to an Express middleware.
+              <code>.end()</code> and
+              <code>.catch()</code>
+            </div>
+            <div class="pb-2">
+              <zero-md src="snippets/cool-stuff/middleware.md"></zero-md>
+            </div>
+          </div>
+          <div class="py-5 lead text-center">
+            Ready to start using Schnapps? check out our <a href="documentation.html" class="text-info">API Documentation</a>
+          </div>
+      </main>
     </div>
-
-    <h4 class="display-5 pb-4">Non-linear flows</h4>
-    <div class="pb-4">
-      <!-- <div class="pb-2">
-        There are many cases where the flow is conditioned by the input data. Let's say we are building a community platform,
-        where each user can refer new users and receive bonus points. Besides users, we have affiliate parteners who can
-        also refer users and receive a commission. Therefore, in our flow we'll have two conditions : 
-        <ol>
-          <li>if the registering user is using a referrerId. </li>
-          <li>if the user did provide a referrerId - the condition will be based on the role of the referrer : simple 
-        users receive bonus ponints, parteners receive commissions.</li>
-        </ol>
-      </div> -->
-      <div class="pb-2">
-        There are many cases where the flow is conditioned by the input data. Let's say we are building a community
-        platform,
-        where each user can refer new users and receive bonus points. Besides users, we have affiliate parteners who can
-        also refer users and receive a commission. Therefore, our data flow is conditioned wether the registering user
-        has
-        provided a referrer id or not. The second condition will be based on the role of the referrer : simple
-        users receive bonus ponints, parteners receive commissions, as in the diagram below:
-      </div>
-      <div class="p-4">
-        <img src="./assets/branching.png" class="img-fluid" alt="Responsive image">
-      </div>
-      <div class="pb-2">
-        We can use <code>next()</code> to pass another controller object like so:
-        <code>next(controller, {someInptData});</code>.
-        Let's replicate the same flow using Schnapps. We'll start by defining each block as a separate controller.
-      </div>
-      <div class="pb-2">
-        <zero-md src="snippets/branching/branching.md"></zero-md>
-      </div>
-    </div>
-
-    <h4 class="display-5 pb-4">Using Stores</h4>
-    <div class="pb-4">
-
-      <div class="pb-2">
-        Stores are temporary data holders. Think of a store as temporary data attachet to the request object - like a
-        session. As
-        long as the request-responce cycle is in progress you can access the stored data. Once the cycle is over, the
-        data is disposed
-        along with the request object.
-      </div>
-      <div class="pb-2"><strong>Session Store</strong> - extends request object with a <code>session</code> object and a
-        <code>setSession()</code> method </div>
-      <div class="pb-2">
-        <zero-md src="snippets/stores/ex1.md"></zero-md>
-      </div>
-
-      <div class="pb-2"><strong>Shared Store</strong> - Similar to session store it extends request object with a
-        <code>shared</code> object and a <code>setShared()</code> method.
-        Altho it has the same structure as the session store, its purpose is to store, share and aggregate data between
-        handlers. For example we need to create a route in which we return detailed information about a user, alog with
-        its current balance. Assuming that we already have a service that given a <code>userId</code> will return user's details,
-        and a similar service which returns user's balance. Let's create a controller that re-uses those services
-      </div>
-      <div class="pb-2">
-        <zero-md src="snippets/stores/ex2.md"></zero-md>
-      </div>
-    </div>
+  </div>
 
 
-    <h4 class="display-5 pb-4">Global error handler</h4>
-    <div class="pb-4">
-      <div class="pb-2">
-        As mentioned in the first example - <code>end()</code> and <code>catch()</code> are optional for any controller
-        and this is true - since we have access to response object in any handler (altho for a cleaner code we do
-        recomend using
-        <code>.end()</code> for handling responses). What if we don't want to handle errors on each controller ? The
-        solution is
-        really simple with Schnapps - we just need to define a global error handler. This way, controllers which do not
-        have an
-        explicit error handler defined will fallback to global error handler.
-      </div>
-      <div class="pb-2">
-        <zero-md src="snippets/error/global-error-handler.md"></zero-md>
-      </div>
-    </div>
-
-    <h4 class="display-5 pb-4">More cool stuff</h4>
-    <div class="pb-4">
-      <div class="pb-2">
-        Use controller as a promise. Not that when a controller is called as promise, it will bypass <code>.end()</code>
-        and
-        <code>.catch()</code>
-      </div>
-      <div class="pb-2">
-        <zero-md src="snippets/cool-stuff/promise.md"></zero-md>
-      </div>
-      <div class="pb-2">
-        Or convert it to an Express.js middleware. Note that when a controller is called as middleware, it will bypass
-        <code>.end()</code> and
-        <code>.catch()</code>
-      </div>
-      <div class="pb-2">
-        <zero-md src="snippets/cool-stuff/middleware.md"></zero-md>
-      </div>
-    </div>
-    <h4 />
-    <div class="pt-2 pb-5 lead text-center">
-      Ready to start using Schnapps? check out our <a href="documentation.html" class="text-info">API Documentation</a>
-    </div>
 </body>
 
 </html>

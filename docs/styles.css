@@ -1,0 +1,88 @@
+/* 
+Color scheme
+https://coolors.co/4e598c-ffffff-f9c784-fcaf58-ff8c42-4281a4
+*/
+
+html, html body {
+  /* font-size: 14px; */
+  /* font-family: 'Roboto', sans-serif; */
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.logo {
+  max-width: 150px;
+  padding: 10px;
+}
+
+.logo-image {
+  text-align: right;
+}
+
+@media (max-width: 765px) {
+  .logo-image, 
+  .logo-text {
+    text-align: center;
+  }
+
+  .logo {
+    max-width: 100px;
+  }
+}
+
+.container {
+  /* max-width: 960px; */
+}
+
+.pricing-header {
+  max-width: 800px;
+}
+
+.card-deck .card {
+  min-width: 220px;
+}
+
+.topnav {
+  background:#4E598C
+}
+
+html body a {
+  color:#4E598C;
+}
+
+.btn-outline-info {
+  color: #4E598C;
+  border-color: #4E598C;
+}
+
+html body .btn-outline-info:hover {
+  color:#fff;
+  background-color: #4E598C;
+  border-color: #4E598C;
+}
+
+.btn-outline-info:not(:disabled):not(.disabled).active, 
+.btn-outline-info:not(:disabled):not(.disabled):active, 
+.show>.btn-outline-info.dropdown-toggle {
+  color:#fff;
+  background-color: #4E598C;
+  border-color: #4E598C;
+}
+
+.btn-outline-info.focus, .btn-outline-info:focus {
+  box-shadow: 0 0 0 0.2rem rgba(78, 89, 140,.5)
+}
+
+nav.docnav ul.subnav {
+  padding-left:20px
+}
+nav.docnav ul.subnav li {
+  list-style-type: none;
+}
+nav.docnav a {
+  font-size: 14px;
+}

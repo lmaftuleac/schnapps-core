@@ -3,8 +3,8 @@
 
 # Schnapps.js
 
-Schnapps is a library that brings a cleaner approach to controller/service structure in APIs. Improves
-code readability and testability, helps build reusable blocks and decreases development effort
+Schnapps is a node.js library that brings a cleaner approach to controller/service structure in APIs. 
+It helps build reusable blocks, improves code readability, and reduces development effort.
 
 [Homepage](https://lmaftuleac.github.io/schnapps-core/)
 
