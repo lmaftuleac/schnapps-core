@@ -87,10 +87,10 @@
               A <strong>handler</strong> is a function, similar to Express's middleware, it accepts four parameters : 
               <code>request</code>, <code>response</code>, <code>next</code>, <code>errorCallback</code>, <code>data</code>. The
               fourth parameter is the input data passed by the previous handler.
-              The main difference however, is that Schnapp's handlers use <code>next()</code> to pass data and to the next handler, 
+              The main difference however is that Schnapp's handlers use <code>next()</code> to pass data the next handler, 
               and <code>errorCallback()</code> for throwing errors. While Express uses <code>next()</code> to pass controll, 
               or to throw an error if any input data is provided (i.e. <code>next(error)</code>). 
-              This is a major difference, and should not be confused when working with Schnapps.<br>
+              This is a major difference, and should not be confused when working with Schnapps.
             </div>
             <div class="pb-2">
               <code>Request</code> and <code>Response</code> objects are passed initially by the framework. Schnapps does not interact
