@@ -1,7 +1,7 @@
 {
   "name": "@schnapps/core",
-  "version": "0.1.15",
-  "description": "SchnApps is a library that brings a cleaner architecture approach to controller/service structure in APIs",
+  "version": "0.1.16",
+  "description": "Schnapps is a node.js a library that simplifies your backend code",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "prepublish": "tsc",
