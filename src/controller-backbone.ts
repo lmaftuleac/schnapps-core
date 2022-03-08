@@ -33,6 +33,7 @@ export class ControllerBackbone implements ControllerBackboneClass {
       this.start(req, res, data)
     }.bind(this)
   }
+  toMiddleware: () => Function
   beforeAll: { (handler: HandlerFunction): ControllerFunction; (controller: ControllerFunction): ControllerFunction }
 
   /** Private */
@@ -147,7 +148,7 @@ export class ControllerBackbone implements ControllerBackboneClass {
     return this.controller
   }
 
-  toMiddleware () {
+  middleware () {
     return (req: RequestObj, res: ResponseObj, expressNext: Function) => {
       const firstNode = this.getFirstNode()
       if (!firstNode) {
