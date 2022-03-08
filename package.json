@@ -1,6 +1,6 @@
 {
   "name": "@schnapps/core",
-  "version": "0.1.17",
+  "version": "0.1.18",
   "description": "Schnapps is a node.js a library that simplifies your backend code",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

@@ -298,11 +298,11 @@ describe('Test Controller creation', function () {
         data.push('handler_2')
         next(data)
       })
-      .beforeAll((req, res, next, errCb, data) => {
+      .bfAll((req, res, next, errCb, data) => {
         data.push('handler_3')
         next(data)
       })
-      .beforeAll((req, res, next, errCb, data) => {
+      .bfAll((req, res, next, errCb, data) => {
         data.push('handler_4')
         next(data)
       })
