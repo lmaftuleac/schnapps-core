@@ -678,19 +678,18 @@ describe('Test Controller creation', function () {
     const ctrl = controller();
     controller.setDefaultErrorHandler((req, res, error) => {
       // should be second
-      expect(error.message).to.equal("Cannot set properties of undefined (setting 'b')");
+      expect(error.message).to.equal("exception");
     })
 
     ctrl.do((req, res, errCb, data) => {
-      const a = undefined;
-      a.b = 1;
+      throw new Error('exception')
     })
     
     const ctrl2 = controller(ctrl);
 
     ctrl2.catch((req, res, error) => {
       // should be first
-      expect(error.message).to.equal("Cannot set properties of undefined (setting 'b')");
+      expect(error.message).to.equal("exception");
     })
 
     const ctrl3 = controller(ctrl);
