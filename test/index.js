@@ -298,11 +298,11 @@ describe('Test Controller creation', function () {
         data.push('handler_2')
         next(data)
       })
-      .bfAll((req, res, next, errCb, data) => {
+      .beforeAll((req, res, next, errCb, data) => {
         data.push('handler_3')
         next(data)
       })
-      .bfAll((req, res, next, errCb, data) => {
+      .beforeAll((req, res, next, errCb, data) => {
         data.push('handler_4')
         next(data)
       })
@@ -677,7 +677,8 @@ describe('Test Controller creation', function () {
   it('should handle error in catch when an exception is thrown', () => {
     const ctrl = controller();
     controller.setDefaultErrorHandler((req, res, error) => {
-      expect(error.message).to.equal("Cannot set property 'b' of undefined");
+      // should be second
+      expect(error.message).to.equal("Cannot set properties of undefined (setting 'b')");
     })
 
     ctrl.do((req, res, errCb, data) => {
@@ -688,7 +689,8 @@ describe('Test Controller creation', function () {
     const ctrl2 = controller(ctrl);
 
     ctrl2.catch((req, res, error) => {
-      expect(error.message).to.equal("Cannot set property 'b' of undefined");
+      // should be first
+      expect(error.message).to.equal("Cannot set properties of undefined (setting 'b')");
     })
 
     const ctrl3 = controller(ctrl);
