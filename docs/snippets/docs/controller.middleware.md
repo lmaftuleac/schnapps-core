@@ -12,7 +12,7 @@ controllerInstance
     next();
   });
 
-app.post('/admin/route', controllerInstance.toMiddleware(), (req, res) => {
+app.post('/admin/route', controllerInstance.middleware(), (req, res) => {
   console.log(req.userRole);
 })
 

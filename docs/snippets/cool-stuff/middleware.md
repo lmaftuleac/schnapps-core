@@ -4,7 +4,7 @@ const AdminAccessMiddleware = controller(AdminAccess)
     req.userRole = role;
     next();
   })
-  .toMiddleware()
+  .middleware()
 
 app.post('/admin/route', AdminAccessMiddleware, async (req, res) => {
   console.log(req.userRole);
