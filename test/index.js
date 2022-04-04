@@ -588,7 +588,7 @@ describe('Test Controller creation', function () {
         data.push('not_called_on_middlewares')
       })
 
-    const middleware = chainOk.toMiddleware()
+    const middleware = chainOk.middleware()
     const next = () => {
       data.push('express_next_called')
     }

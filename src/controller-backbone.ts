@@ -146,7 +146,7 @@ export class ControllerBackbone implements ControllerBackboneClass {
     return this.controller
   }
 
-  toMiddleware () {
+  middleware () {
     return (req: RequestObj, res: ResponseObj, expressNext: Function) => {
       const firstNode = this.getFirstNode()
       if (!firstNode) {

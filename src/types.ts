@@ -30,7 +30,7 @@ export interface ControllerBackboneClass {
   }
   catch: { (errorCallback: CatchErrorCallback ): ControllerFunction }
   end: { (errorCallback: EndChainCallback ): ControllerFunction }
-  toMiddleware: { (): Function } 
+  middleware: { (): Function } 
   promise: { (request: RequestObj, response: ResponseObj, data: any): Promise<any> }
 }
 
@@ -40,7 +40,7 @@ export interface ControllerFunction {
   beforeAll?: { (handler: HandlerFunction | ControllerFunction ): ControllerFunction }
   catch?: { (errorCallback: CatchErrorCallback ): ControllerFunction }
   end?: { (errorCallback: EndFunction ): ControllerFunction }
-  toMiddleware?: { (): Function } 
+  middleware?: { (): Function } 
   promise?: { (request: RequestObj, response: ResponseObj, data: any): Promise<any> }
   backbone?: ControllerBackboneClass
 }
